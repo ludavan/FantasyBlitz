@@ -26,6 +26,62 @@ body {
   padding-top: 100px;
 }
 
+/* Media Query für Handys */
+@media screen and (max-width: 768px) {
+    /* Header anpassen */
+    header {
+        height: var(--header-h); /* Nutzt die Variable aus der Root-Sektion */
+        flex-direction: column; /* Elemente untereinander anordnen */
+        align-items: center;
+        justify-content: center;
+        padding: 10px 0;
+        gap: 10px;
+    }
+    
+    header::before,
+    header::after {
+        content: none; /* Die weissen Farbverläufe entfernen */
+    }
+
+    .logo-container {
+        margin-left: 0;
+    }
+
+    /* Navigation anpassen */
+    nav {
+        position: static; /* Positionierung aufheben */
+        transform: none; /* Transformation aufheben */
+        left: auto;
+        top: auto;
+        display: flex;
+        flex-direction: column; /* Navigationslinks untereinander */
+        align-items: center;
+        gap: 10px;
+    }
+
+    nav a {
+        padding: 4px 8px; /* Kleinere Abstände für Links */
+        font-size: 0.9rem;
+    }
+
+    /* main anpassen, um Platz für den Header zu machen */
+    body {
+        padding-top: var(--header-h); /* Sorgt für den richtigen Abstand oben */
+    }
+
+    /* Filter-Buttons anpassen */
+    #filterButtons button,
+    .position-button {
+        font-size: 0.9rem;
+        padding: 8px 14px;
+        margin: 0 4px;
+    }
+
+    .rankings-page .header-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 
 /* Header */
 header {
@@ -125,6 +181,36 @@ main h2 {
 .position-button.active {
   background-color: #000;
   color: #fff;
+}
+
+/* Media Query für Handys */
+@media screen and (max-width: 480px) {
+    /* Rankings-Grid anpassen */
+    .rankings-page .rankings-grid {
+        grid-template-columns: 1fr; /* Alle Spalten untereinander */
+        gap: 8px;
+    }
+
+    /* Draft-Cheat-Sheet Seite anpassen */
+    .draft-page .rankings-grid {
+        grid-template-columns: 1fr; /* Alle Spalten untereinander */
+        gap: 8px;
+    }
+
+    /* Karten anpassen */
+    .feature-grid {
+        grid-template-columns: 1fr; /* Alle Spalten untereinander */
+        gap: 20px;
+    }
+
+    .feature-card {
+        padding: 15px;
+    }
+
+    .rank-boxes {
+        flex-direction: column;
+        gap: 8px;
+    }
 }
 
 .rankings-page { max-width:900px; margin:0 auto; padding:20px 20px 80px; }
