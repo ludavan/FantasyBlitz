@@ -1,4 +1,3 @@
-FantasyBlitz - Fantasy Football Insights
 Willkommen bei FantasyBlitz, deiner Quelle für Fantasy Football-Analysen und -Statistiken!
 
 Diese Website bietet wöchentliche Tipps, Spieler-Rankings und detaillierte Statistiken, speziell auf die Bedürfnisse von Spielern im deutschsprachigen Raum zugeschnitten.
