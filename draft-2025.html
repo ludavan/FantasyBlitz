@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Draft Rankings 2025 – FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+<script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+
+</head>
+
+<body>
+  <header>
+      <div class="logo-container">
+        <a href="index.html">
+          <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+        </a>
+      </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+    </nav>
+  </header>
+
+  <main class="draft-page">
+
+    
+    <h2>FantasyBlitz Draft Ranking 2025</h2>
+ <p class="intro-text">
+  Das <b>FantasyBlitz Draft-Ranking 2025</b> umfasst alle relevanten Spieler – sowohl für <b>Alle Positionen</b> (ohne Defense und Kicker)  
+  als auch getrennt nach einzelnen Positionen (<b>QB, RB, WR, TE</b>).  
+  Für <b>Defense und Kicker</b> werden nur die Top&nbsp;8 angezeigt, da diese Positionen im Draft weniger Gewicht haben und während der Saison gut gestreamt werden können.  
+  Beim Draft kannst du die Listen interaktiv durchstreichen, um jederzeit den Überblick zu behalten.
+</p>
+
+
+    <a href="draft-board.html" class="btn-dark">⇨ Zum interaktiven Draft Board</a>
+
+    <!-- Toolbar rechts -->
+    <div class="draft-toolbar">
+      <button id="togglePosColors" class="btn-toggle" type="button" aria-pressed="false">
+        Positionsfarben ausblenden
+      </button>
+    </div>
+
+    <div id="rankingsContainer" class="rankings-grid"></div>
+  </main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a class="footer-link" href="impressum.html">Impressum</a> ·
+    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+  </p>
+</footer>
+
+<script>
+  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  (function(){
+    var start=2025, y=new Date().getFullYear();
+    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+  })();
+</script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Aktive Navigation markieren
+      const currentPage = window.location.pathname.split("/").pop().toLowerCase();
+      document.querySelectorAll("nav a").forEach(link => {
+        const href = (link.getAttribute("href") || "").toLowerCase();
+        if (href === currentPage) link.classList.add("active");
+      });
+
+      // ==== Pfade zu deinen JSONs ====
+      const BASE_JSON_PATH = 'data/draft/2025/draft-rankings-2025.json';      // ALL, QB, RB, WR, TE
+      const DEF_JSON_PATH  = 'data/draft/2025/draft-rankings-2025-def.json';  // NUR Defenses
+      const K_JSON_PATH    = 'data/draft/2025/draft-rankings-2025-k.json';    // NUR Kicker
+
+      // Daten laden
+      let baseData = [], defData = [], kData = [];
+      try {
+        const [baseRes, defRes, kRes] = await Promise.all([
+          fetch(BASE_JSON_PATH, { cache: 'no-store' }),
+          fetch(DEF_JSON_PATH,  { cache: 'no-store' }),
+          fetch(K_JSON_PATH,    { cache: 'no-store' })
+        ]);
+        if (!baseRes.ok) throw new Error('Fehler beim Laden: ' + BASE_JSON_PATH);
+        baseData = await baseRes.json();
+        if (defRes.ok) defData = await defRes.json();
+        if (kRes.ok)   kData   = await kRes.json();
+      } catch (error) {
+        console.error('Fehler beim Laden der Rankings:', error);
+        document.getElementById('rankingsContainer').innerHTML =
+          '<div style="padding:10px;border:1px solid #444;border-radius:8px;">Konnte die Draft-Rankings nicht vollständig laden.</div>';
+      }
+
+      const container = document.getElementById('rankingsContainer');
+      container.innerHTML = '';
+
+      // 1) Normale Spalten: ALL + QB + RB + WR + TE
+      const positions = ['ALL', 'QB', 'RB', 'WR', 'TE'];
+
+      const titleFor = (pos) => (pos === 'ALL' ? 'Alle Positionen' : pos);
+      const playersFor = (pos) => (pos === 'ALL' ? baseData : baseData.filter(p => String(p.position).toUpperCase() === pos));
+
+      positions.forEach(pos => {
+        const col = document.createElement('div');
+        col.className = 'position-column';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = titleFor(pos);
+        col.appendChild(h3);
+
+        const players = playersFor(pos);
+        players.forEach((player, idx) => {
+          const div = document.createElement('div');
+          const posClass = String(player.position || '').trim();
+          div.classList.add('player-entry');
+          if (posClass) div.classList.add(posClass);
+          div.dataset.player = player.player;
+
+          const rankText = (pos === 'ALL') ? (idx + 1) + '.' : ((player.rank ?? (idx + 1)) + '.');
+          div.textContent = `${rankText} ${player.player} (${player.team}, ${player.position})`;
+
+          div.addEventListener('click', () => {
+            const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+            document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+          });
+
+          col.appendChild(div);
+        });
+
+        container.appendChild(col);
+      });
+
+      // 2) Kombi-Spalte: DEF (oben) + Kicker (unten)
+      const dkCol = document.createElement('div');
+      dkCol.className = 'position-column';
+
+      // DEF Block
+      const defH3 = document.createElement('h3');
+      defH3.textContent = 'DEF';
+      dkCol.appendChild(defH3);
+
+      defData.forEach((player, idx) => {
+        const div = document.createElement('div');
+        div.classList.add('player-entry', 'DEF'); 
+        div.dataset.player = player.player;
+        const rankText = (player.rank ?? (idx + 1)) + '.';
+        div.textContent = `${rankText} ${player.player} (${player.team}, ${player.position})`;
+
+        div.addEventListener('click', () => {
+          const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+          document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+        });
+
+        dkCol.appendChild(div);
+      });
+
+      // Trennlinie
+      const sep = document.createElement('hr');
+      sep.className = 'divider';
+      dkCol.appendChild(sep);
+
+      // Kicker Block
+      const kH3 = document.createElement('h3');
+      kH3.className = 'subhead';
+      kH3.textContent = 'Kicker';
+      dkCol.appendChild(kH3);
+
+      kData.forEach((player, idx) => {
+        const div = document.createElement('div');
+        div.classList.add('player-entry', 'Kicker'); 
+        div.dataset.player = player.player;
+        const rankText = (player.rank ?? (idx + 1)) + '.';
+        div.textContent = `${rankText} ${player.player} (${player.team}, ${player.position})`;
+
+        div.addEventListener('click', () => {
+          const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+          document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+        });
+
+        dkCol.appendChild(div);
+      });
+
+      container.appendChild(dkCol);
+
+      // === Positionsfarben: Toggle-Button ===
+      const toggleBtn = document.getElementById('togglePosColors');
+      function applyPosColorsState(off){
+        document.body.classList.toggle('no-pos-colors', off);
+        toggleBtn.textContent = off ? 'Positionsfarben anzeigen' : 'Positionsfarben ausblenden';
+        toggleBtn.setAttribute('aria-pressed', String(off));
+        localStorage.setItem('posColors', off ? 'off' : 'on');
+      }
+      const saved = localStorage.getItem('posColors');
+      applyPosColorsState(saved === 'off');
+      toggleBtn.addEventListener('click', () => {
+        const willOff = !document.body.classList.contains('no-pos-colors');
+        applyPosColorsState(willOff);
+      });
+    });
+  </script>
+</body>
+</html>

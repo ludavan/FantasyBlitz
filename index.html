@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FantasyBlitz – Startseite</title>
+  <link rel="stylesheet" href="css/style.css" />
+<script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const currentPage = window.location.pathname.split("/").pop();
+  document.querySelectorAll("nav a").forEach(link => {
+    if ((link.getAttribute("href")||"") === currentPage) link.classList.add("active");
+  });
+});
+</script>
+
+
+<body>
+  <header>
+      <div class="logo-container">
+        <a href="index.html">
+          <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+        </a>
+      </div>
+  <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+  <div class="dropdown">
+    <a href="#">Draft</a>
+    <div class="dropdown-content">
+      <a href="draft-2025.html">Draft Cheat Sheet</a>
+      <a href="draft-guide.html">Draft Guide</a>
+    </div>
+  </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+  </nav>
+</header>
+
+
+<main class="page-content" style="margin-top: 8px;">
+  <section class="hero" style="text-align: center; margin-bottom: 12px;">
+    <img
+      src="img/fantasyblitz-logo.png"
+      alt="FantasyBlitz Schriftzug"
+      style="max-width: 300px; height: auto; display: block; margin: 0 auto 6px;"
+    />
+<p style="margin: 0 auto 50px; font-size: 1.25rem; font-weight: 500; line-height: 1.5; max-width: 700px; padding: 0 20px;">
+  Der Fantasy Football Guide aus der deutschsprachigen Community – mit wöchentlichen Rankings, 
+  Waiver-Tipps und interaktiven Tools, die dir helfen, deine Liga zu dominieren.
+</p>
+
+
+  </section>
+
+  <style>
+  :root{
+    --header-bg:#333333;
+    --header-bg-hover:#444444;
+  }
+
+
+  .btn-dark{
+    background-color: var(--header-bg);
+    color:#fff;
+    border:1px solid var(--header-bg);
+    display:inline-block;       
+    padding:6px 12px;           
+    font-size:0.95rem;          
+    font-weight:700;
+    border-radius:18px;         
+    line-height:1.2;
+    box-shadow:0 2px 6px rgba(0,0,0,0.25);
+    transition: background-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    margin-top:auto;            
+    margin-left:auto;           
+    margin-right:auto;         
+  }
+  .btn-dark:hover{
+    background-color: var(--header-bg-hover);
+    box-shadow:0 4px 12px rgba(0,0,0,0.35);
+    transform:translateY(-1px);
+  }
+</style>
+
+
+
+<section class="feature-grid">
+
+  <!-- Weekly Rankings -->
+  <div class="feature-card">
+    <img src="img/weekly-rankings-hero.png" alt="Weekly Rankings" />
+    <h3>Weekly Rankings</h3>
+    <p>Topaktuelle Spieler-Rankings pro Woche für jede Position – direkt aus unserer Fantasy-Analyse.</p>
+    <a href="rankings.html" class="btn-dark">Rankings ansehen</a>
+  </div>
+
+  <!-- Waiver Picks -->
+  <div class="feature-card">
+    <img src="img/waiver-hero.png" alt="Top Waivers" />
+    <h3>Top Waiver Picks</h3>
+    <p>Wöchentliche Empfehlungen für Free Agents mit Breakout-Potenzial.</p>
+    <a href="waivers.html" class="btn-dark">Zu den Waivers</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="feature-card">
+    <img src="img/stats-hero.png" alt="Statistiken" />
+    <h3>Fantasy Statistiken</h3>
+    <p>Eigene Charts & Tools für echte Fantasy-Nerds – mit tiefen Team- und Spieleranalysen sowie Trend-Insights.</p>
+    <a href="stats.html" class="btn-dark">Statistiken ansehen</a>
+  </div>
+
+  <!-- Draft Rankings -->
+  <div class="feature-card">
+    <img src="img/draft-rankings-hero.png" alt="Draft Rankings" />
+    <h3>Draft Rankings</h3>
+    <p>Unsere Top-Spieler für deinen Draft – mit interaktivem Cheat-Sheet für dein Live-Board.</p>
+    <a href="draft-2025.html" class="btn-dark">Zu den Draft Rankings</a>
+  </div>
+
+</section>
+
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a class="footer-link" href="impressum.html">Impressum</a> ·
+    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+  </p>
+</footer>
+
+<script>
+  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  (function(){
+    var start=2025, y=new Date().getFullYear();
+    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+  })();
+</script>
+
+
+</body>
+</html>

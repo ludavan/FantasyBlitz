@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Datenschutz – FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Nur hier: Titel↔Text enger, Blöcke klar getrennt */
+    .privacy-page .rule-card h3 { margin: 0 0 6px; }
+    .privacy-page .rule-card p,
+    .privacy-page .rule-card ul { margin: 0; }
+    .privacy-page .rule-card + .rule-card { margin-top: 26px; }
+  </style>
+</head>
+<body class="privacy-page">
+  <header>
+    <div class="logo-container">
+      <a href="index.html">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+    </nav>
+  </header>
+
+  <main class="rankings-page">
+    <div class="header-row">
+      <h2>Datenschutz</h2>
+      <div class="header-right"></div>
+    </div>
+
+
+    <section class="rule-card">
+      <h3>1. Verantwortliche Stelle</h3>
+      <p>
+        Verantwortlich für diese Website: <strong>FantasyBlitz</strong> (Schweiz).
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>2. Hosting & Server-Logs</h3>
+      <p>
+        Beim Aufruf der Seiten verarbeitet der Hosting-Anbieter automatisch technisch notwendige Informationen
+        (z.&nbsp;B. IP-Adresse, Datum/Uhrzeit, angeforderte URL, Referrer, User-Agent), um Inhalte auszuliefern,
+        Stabilität zu gewährleisten und Missbrauch zu verhindern. Die Logdaten werden ausschließlich zu diesen
+        Zwecken genutzt und nach kurzer Zeit automatisch gelöscht.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>3. Cookies & lokale Speicher</h3>
+      <p>
+        Es werden <strong>keine</strong> nicht-essenziellen Cookies gesetzt. Es wird kein Local-/Session-Storage für
+        Tracking-Zwecke genutzt und keine Social- oder Werbe-Plugins eingebunden.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>4. Reichweitenmessung (Cloudflare Web Analytics, cookiefrei)</h3>
+      <p>
+        Zur rein statistischen Reichweitenmessung nutzen wir <strong>Cloudflare Web Analytics</strong>.
+        Der Dienst kommt <strong>ohne Cookies</strong> aus und liefert ausschließlich <strong>aggregierte Nutzungsdaten</strong>
+        (z.&nbsp;B. Seitenaufrufe, aufgerufene Pfade, Referrer, ungefähre Region/Land, Gerätetyp/Browser).
+        Es werden keine personenbezogenen Profile erstellt.
+      </p>
+      <p>
+        Anbieter: Cloudflare, Inc., USA. Es kann eine Übermittlung in die USA stattfinden; Cloudflare setzt geeignete
+        Schutzmechanismen ein (u.&nbsp;a. Standardvertragsklauseln). Die Einbindung erfolgt über ein kleines Script-Beacon.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>5. Externe Inhalte & Links</h3>
+      <p>
+        Diese Website kann Verweise auf externe Seiten enthalten. Für deren Inhalte und Datenschutzpraktiken sind die
+        jeweiligen Anbieter verantwortlich.
+      </p>
+    </section>
+
+    <section class="rule-card">
+        <h3>6. Ihre Rechte</h3>
+        <p>
+        Wir führen keine Nutzerkonten und speichern keine Formulardaten; verarbeitet werden nur technische Server-Logs
+        sowie aggregierte, cookiefreie Nutzungsdaten (Cloudflare Web Analytics). Sie können Auskunft über ggf. betroffene
+        personenbezogene Daten verlangen sowie deren Berichtigung, Löschung, Einschränkung oder Übertragung beantragen
+        und der Verarbeitung widersprechen. Wenden Sie sich dafür an die im <a href="impressum.html">Impressum</a> genannten
+        Kontaktdaten. Zur Bearbeitung können wir einen Identitätsnachweis anfordern; gesetzliche Aufbewahrungspflichten
+        (z. B. für Server-Logs) bleiben unberührt.
+        </p>
+
+
+    </section>
+
+    <section class="rule-card">
+      <h3>7. Änderungen</h3>
+      <p>
+        Diese Hinweise werden angepasst, wenn die Website erweitert wird (z.&nbsp;B. Kontaktformular, Newsletter oder
+        zusätzliche Funktionen). Die aktuelle Fassung ist auf dieser Seite abrufbar.
+      </p>
+    </section>
+
+    <p class="small muted" style="margin-top:40px;">
+      Stand: <span id="ds-stand">2025-08-19</span>
+    </p>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>
+      © <span id="y">2025</span> FantasyBlitz ·
+      <a class="footer-link" href="impressum.html">Impressum</a> ·
+      <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+    </p>
+  </footer>
+
+  <script>
+    // Jahresanzeige: "2025" oder "2025–{aktuelles Jahr}"
+    (function(){
+      var start=2025, y=new Date().getFullYear();
+      var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Waivers – FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    /* Titelbalken */
+    .waiver-section {
+      color: #fff;
+      padding: 16px 20px;
+      margin: 30px 0 20px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+
+    /* Karten-Container */
+    .streamer-box, .waiver-list {
+      background: #f1f1f1;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+    .streamer-box h4 { margin: 0 0 8px 0; }
+
+    /* Reihen mit Boxen nebeneinander */
+    .rank-boxes {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    /* Einzelne Platzhalter-Box */
+    .rank-card {
+      flex: 1;
+      min-height: 86px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      border: 2px solid #e5e7eb; /* wird je nach Pos überschrieben */
+      overflow: hidden;
+    }
+
+    .rank-num{
+      position:absolute;
+      top:6px; left:8px;
+      font-weight:700;
+      font-variant-numeric:tabular-nums;
+      font-size:0.8rem;
+      padding:1px 6px;
+      border-radius:6px;
+      background:#fff;
+      border:1px solid #000;
+      color:#111;
+    }
+
+
+    /* Inhalt (wird später per JS befüllt). Jetzt leer. */
+    .rank-content {
+      font-weight: 700;
+      color: #111;
+      max-width: 100%;
+      padding: 6px 10px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .rank-sub {
+      display:block;
+      margin-top: 2px;
+      font-weight: 600;
+      color:#6b7280;
+      font-size: .9rem;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Top-Waiver Liste*/
+    .five-wide { display:flex; gap:16px; justify-content:space-between; margin-top:6px; }
+    .five-wide .rank-card { min-height: 72px; }
+
+    /* Responsive: stapeln */
+    @media (max-width: 700px){
+      .rank-boxes, .five-wide { flex-direction: column; }
+      .rank-card { min-height: 72px; }
+    }
+  </style>
+
+<script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="index.html">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+    </nav>
+  </header>
+
+<main class="rankings-page">
+<div class="header-row">
+  <h2>Top Waiver Picks 2025</h2>
+  <div class="header-right">
+    <select id="weekSelector" class="position-button week-select">
+      <option>Woche auswählen…</option>
+    </select>
+  </div>
+</div>
+
+
+ <p class="intro-text">
+Die Waiver-Tipps stehen nach Abschluss der ersten Spielwoche zur Verfügung und werden jeweils am Dienstag veröffentlicht. 
+Neben den allgemeinen Waiver-Picks findest du hier auch Streamer-Empfehlungen für Quarterbacks, Tight Ends, Defenses und Kicker. 
+Streamer sind kurzfristige Optionen für eine einzelne Woche – ideal, wenn du Lücken im Kader füllen oder Matchups gezielt ausnutzen möchtest.
+</p>
+
+
+
+    <!-- Top Waiver Picks – Alle Spieler -->
+    <div class="waiver-section all">Top Waiver Picks – Alle Spieler</div>
+    <div class="waiver-list">
+      <div class="five-wide" id="topFive">
+        <div class="rank-card card-all">
+          <span class="rank-num">1</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-all">
+          <span class="rank-num">2</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-all">
+          <span class="rank-num">3</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-all">
+          <span class="rank-num">4</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-all">
+          <span class="rank-num">5</span>
+          <div class="rank-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streamer: QB -->
+    <div class="waiver-section QB">Top 3 Streamer Picks – Quarterback</div>
+    <div class="streamer-box">
+      <div class="rank-boxes" id="qbCards">
+        <div class="rank-card card-QB">
+          <span class="rank-num">1</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-QB">
+          <span class="rank-num">2</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-QB">
+          <span class="rank-num">3</span>
+          <div class="rank-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streamer: TE -->
+    <div class="waiver-section TE">Top 3 Streamer Picks – Tight End</div>
+    <div class="streamer-box">
+      <div class="rank-boxes" id="teCards">
+        <div class="rank-card card-TE">
+          <span class="rank-num">1</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-TE">
+          <span class="rank-num">2</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-TE">
+          <span class="rank-num">3</span>
+          <div class="rank-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streamer: Defense -->
+    <div class="waiver-section DEF">Top 3 Streamer Picks – Defense</div>
+    <div class="streamer-box">
+      <div class="rank-boxes" id="defCards">
+        <div class="rank-card card-DEF">
+          <span class="rank-num">1</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-DEF">
+          <span class="rank-num">2</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-DEF">
+          <span class="rank-num">3</span>
+          <div class="rank-content"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Streamer: Kicker -->
+    <div class="waiver-section Kicker">Top 3 Streamer Picks – Kicker</div>
+    <div class="streamer-box">
+      <div class="rank-boxes" id="kCards">
+        <div class="rank-card card-Kicker">
+          <span class="rank-num">1</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-Kicker">
+          <span class="rank-num">2</span>
+          <div class="rank-content"></div>
+        </div>
+        <div class="rank-card card-Kicker">
+          <span class="rank-num">3</span>
+          <div class="rank-content"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a class="footer-link" href="impressum.html">Impressum</a> ·
+    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+  </p>
+</footer>
+
+<script>
+  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  (function(){
+    var start=2025, y=new Date().getFullYear();
+    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+  })();
+</script>
+
+
+
+  <!-- späteres Füllen per JS – Platzhalter bleiben leer, wenn keine Daten -->
+  <script>
+    // Beispiel-Funktionen zum späteren Befüllen:
+    // fillTopFive([{player:'Name', team:'ABC'}, ...]);
+    // fillCards('qbCards', [{player:'QB1', team:'BUF'}, ...]);
+
+    function fillTopFive(items){
+      const host = document.getElementById('topFive');
+      if (!host) return;
+      [...host.querySelectorAll('.rank-card')].forEach((card, i) => {
+        const c = card.querySelector('.rank-content');
+        if (!c) return;
+        const p = (items||[])[i];
+        c.textContent = p ? `${p.player}${p.team ? ' – '+String(p.team).toUpperCase() : ''}` : '';
+      });
+    }
+
+    function fillCards(hostId, items){
+      const host = document.getElementById(hostId);
+      if (!host) return;
+      [...host.querySelectorAll('.rank-card')].forEach((card, i) => {
+        const c = card.querySelector('.rank-content');
+        if (!c) return;
+        const p = (items||[])[i];
+        c.textContent = p ? `${p.player}${p.team ? ' – '+String(p.team).toUpperCase() : ''}` : '';
+      });
+    }
+  </script>
+</body>
+</html>
