@@ -1,0 +1,10 @@
+[
+  { "rank": 1,  "player": "Denver Broncos",          "position": "DEF", "team": "DEN" },
+  { "rank": 2,  "player": "Baltimore Ravens",        "position": "DEF", "team": "BAL" },
+  { "rank": 3,  "player": "Philadelphia Eagles",     "position": "DEF", "team": "PHI" },
+  { "rank": 4,  "player": "Houston Texans",          "position": "DEF", "team": "HOU" },
+  { "rank": 5,  "player": "Pittsburgh Steelers",     "position": "DEF", "team": "PIT" },
+  { "rank": 6,  "player": "Minnesota Vikings",       "position": "DEF", "team": "MIN" },
+  { "rank": 7,  "player": "Detroit Lions",           "position": "DEF", "team": "DET" },
+  { "rank": 8,  "player": "Buffalo Bills",           "position": "DEF", "team": "BUF" }
+]

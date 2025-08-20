@@ -1,0 +1,10 @@
+[
+  { "rank": 1,  "player": "Brandon Aubrey",      "position": "Kicker", "team": "DAL" },
+  { "rank": 2,  "player": "Cameron Dicker",      "position": "Kicker", "team": "LAC" },
+  { "rank": 3,  "player": "Ka'imi Fairbairn",    "position": "Kicker", "team": "HOU" },
+  { "rank": 4,  "player": "Chris Boswell",       "position": "Kicker", "team": "PIT" },
+  { "rank": 5,  "player": "Jake Bates",          "position": "Kicker", "team": "DET" },
+  { "rank": 6,  "player": "Chase McLaughlin",    "position": "Kicker", "team": "TB" },
+  { "rank": 7,  "player": "Wil Lutz",            "position": "Kicker", "team": "DEN" },
+  { "rank": 8, "player": "Tyler Bass",          "position": "Kicker", "team": "BUF" }
+]
