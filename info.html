@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="de">
 
@@ -257,3 +258,264 @@
 
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="de">
+
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Info – Half-PPR Regeln, Glossar, Methodik & Über mich | FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root { --card-bg:#f7f7f7; --card-brd:#dcdcdc; --muted:#666; --accent:#444; }
+
+    /* Layout */
+    .intro{margin:6px 0 14px;color:var(--muted)}
+
+    /* Karten & Typo */
+    .rule-card{background:var(--card-bg);border:1px solid var(--card-brd);border-radius:12px;padding:16px 18px;margin:18px 0}
+    .rule-card h3{margin:0 0 10px}
+    .twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .list-tight{margin:0;padding-left:18px}
+    .list-tight li{margin:6px 0}
+    .muted{color:var(--muted)}
+    .small{font-size:.95rem}
+    .pill{display:inline-block;padding:6px 14px;margin-bottom:8px;border-radius:999px;background:#666;color:#fff;font-weight:600;font-size:.85rem;letter-spacing:.2px}
+
+    /* Inhaltsverzeichnis – Links schlicht, schwarz */
+    .toc{background:var(--card-bg);border:1px solid var(--card-brd);border-radius:12px;padding:12px 14px;margin:12px 0}
+    .toc h3{margin:0 0 8px;font-size:1.05rem}
+    .toc ul{margin:0;padding-left:0;list-style:none}
+    .toc li{margin:6px 0}
+    .toc a{
+      color:#111; text-decoration:none; font-weight:700;
+      padding:0; background:transparent; border:none; border-radius:0; display:inline-block;
+    }
+    .toc a:hover{color:#000; text-decoration:underline;}
+
+    /* Tabelle */
+    table.scoring {border-collapse:collapse;width:100%;margin-top:8px}
+    table.scoring th,table.scoring td{border:1px solid #ccc;padding:6px 10px;text-align:left}
+    table.scoring th{background:#f0f0f0}
+
+    @media print{header,nav{display:none!important}}
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentPage = window.location.pathname.split("/").pop();
+      document.querySelectorAll("nav a").forEach(link => {
+        if ((link.getAttribute("href")||"").toLowerCase()===currentPage.toLowerCase()) link.classList.add("active");
+      });
+      document.querySelectorAll('a[href^="#"]').forEach(a=>{
+        a.addEventListener('click',e=>{
+          const id=a.getAttribute('href').slice(1);
+          const el=document.getElementById(id);
+          if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'})}
+        })
+      });
+    });
+  </script>
+
+  <script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="index.html">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html" class="active">Info</a>
+    </nav>
+  </header>
+
+<main class="rankings-page">
+
+  <div class="header-row">
+    <h2>Info</h2>
+    <div class="header-right">
+      <!-- optional: später Filter/Links/Badge -->
+    </div>
+  </div>
+
+  <p class="intro-text">
+    Diese Seite soll dir einen klaren Überblick geben: welche Scoring-Regeln gelten,
+    welche Begriffe im Fantasy-Alltag wichtig sind und nach welcher Methodik die Rankings entstehen.
+    Außerdem erfährst du, welche Idee und Motivation hinter FantasyBlitz steckt
+    und warum diese Plattform ins Leben gerufen wurde.
+  </p>
+
+
+
+    <aside class="toc" aria-label="Inhaltsverzeichnis">
+      <h3>Inhalt</h3>
+      <ul>
+        <li><a href="#regeln">Punkte-Regeln</a></li>
+        <li><a href="#glossar">Glossar</a></li>
+        <li><a href="#methodik">Methodik</a></li>
+        <li><a href="#scoringarten">Scoring-Formate</a></li>
+        <li><a href="#uebermich">Über mich</a></li>
+      </ul>
+    </aside>
+
+    <section id="regeln" class="rule-card">
+      <span class="pill">Half-PPR Scoring</span>
+      <h3>Punkte-Regeln</h3>
+      <table class="scoring">
+        <thead>
+          <tr><th>Kategorie</th><th>Aktion</th><th>Punkte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="4"><b>Offense</b></td><td>25 Pass-Yards</td><td>+1</td></tr>
+          <tr><td>Pass-TD</td><td>+4</td></tr>
+          <tr><td>Interception (geworfen)</td><td>−1</td></tr>
+          <tr><td>Lost Fumble</td><td>−2</td></tr>
+          <tr><td rowspan="3"></td><td>10 Rush-Yards</td><td>+1</td></tr>
+          <tr><td>10 Rec-Yards</td><td>+1</td></tr>
+          <tr><td>Reception</td><td>+0,5</td></tr>
+          <tr><td></td><td>Rush/Rec-TD</td><td>+6</td></tr>
+          <tr><td rowspan="5"><b>Defense / ST</b></td><td>Sack</td><td>+1</td></tr>
+          <tr><td>Interception</td><td>+2</td></tr>
+          <tr><td>Fumble Recovery</td><td>+2</td></tr>
+          <tr><td>Safety</td><td>+2</td></tr>
+          <tr><td>Def/ST-TD</td><td>+6</td></tr>
+          <tr><td></td><td>0 PA</td><td>+10</td></tr>
+          <tr><td></td><td>1–6 PA</td><td>+7</td></tr>
+          <tr><td></td><td>7–13 PA</td><td>+4</td></tr>
+          <tr><td></td><td>14–20 PA</td><td>+1</td></tr>
+          <tr><td></td><td>21–27 PA</td><td>0</td></tr>
+          <tr><td></td><td>28–34 PA</td><td>−1</td></tr>
+          <tr><td></td><td>35+ PA</td><td>−4</td></tr>
+          <tr><td rowspan="3"><b>Kicker</b></td><td>PAT</td><td>+1</td></tr>
+          <tr><td>Field Goal 0–39 Yards</td><td>+3</td></tr>
+          <tr><td>Field Goal 40–49 Yards</td><td>+4</td></tr>
+          <tr><td></td><td>Field Goal 50+ Yards</td><td>+5</td></tr>
+          <tr><td></td><td>Missed FG &lt; 40 Yards</td><td>−1</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">Hinweis: Return-TDs zählen in vielen Ligen sowohl für den Spieler (+6) als auch für das Team-DEF/ST (+6).</p>
+    </section>
+
+    <section id="glossar" class="rule-card">
+      <h3>Glossar – wichtige Begriffe</h3>
+      <div class="twocol">
+        <div>
+          <ul class="list-tight">
+            <li><b>ADP (Average Draft Position):</b> Durchschnittliche Draft-Position eines Spielers über viele Drafts.</li>
+            <li><b>Ceiling / Floor:</b> Oberes/unteres erwartbares Punktespektrum eines Spielers in einem Matchup.</li>
+            <li><b>Depth Chart:</b> Offizielle Reihenfolge der Spieler pro Position im Team.</li>
+            <li><b>Flex:</b> Roster-Spot, den man mit RB, WR oder TE füllen kann.</li>
+            <li><b>Handcuff:</b> Ersatz-RB eines Workhorse-RBs – springt bei Ausfall in eine große Rolle.</li>
+            <li><b>PPR (Points per Reception):</b> Scoring, bei dem Catches Punkte bringen (Half-PPR = 0,5 Punkte).</li>
+            <li><b>Roster / Lineup:</b> Team-Kader / Aufstellung für die Woche.</li>
+            <li><b>Sleeper:</b> Spieler mit (noch) geringer Wahrnehmung, der Potenzial auf deutlich bessere Leistung hat.</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="list-tight">
+            <li><b>Snap Share:</b> Anteil der Offense-Snaps, die ein Spieler auf dem Feld steht.</li>
+            <li><b>Streamen / Streamer:</b> Spieler gezielt für eine Woche nutzen, weil das Matchup passt (z. B. QB/TE/DEF).</li>
+            <li><b>Target Share:</b> Anteil der Team-Targets, die ein Spieler bekommt.</li>
+            <li><b>TNF/SNF/MNF:</b> Thursday/Sunday/Monday Night Football.</li>
+            <li><b>Waiver Wire:</b> Spieler-Pool, aus dem nach der Waiver-Phase verpflichtet werden kann.</li>
+            <li><b>Bye Week:</b> Woche, in der ein Team spielfrei hat (0 Punkte für betroffene Spieler).</li>
+            <li><b>Game Script:</b> Erwartete Spielentwicklung (führt/zurück) – beeinflusst Play-Calling und Volumen.</li>
+            <li><b>Red Zone Usage:</b> Nutzung in Tornähe (TD-Upside).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="methodik" class="rule-card">
+      <h3>Methodik – wie entstehen die Weekly Rankings?</h3>
+      <div class="twocol">
+        <div>
+          <strong>Quantitativ</strong>
+          <ul class="list-tight">
+            <li>Half-PPR als Scoring-Basis</li>
+            <li>Volumen: Snaps, Targets, Carries</li>
+            <li>Effizienz: Yards/Attempt, Yards/Route, TD-Rate</li>
+            <li>Matchups, Momentum & Rollen (z. B. RZ-Usage)</li>
+          </ul>
+        </div>
+        <div>
+          <strong>Qualitativ</strong>
+          <ul class="list-tight">
+            <li>Verletzungs-News & Depth Charts</li>
+            <li>Rollenveränderungen / Coach-Tendenzen</li>
+            <li>Game-Script-Erwartungen</li>
+            <li>Wetter-Check, wenn relevant</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small muted">Hinweis: Die Rankings werden vor jedem Spieltag aktualisiert (inkl. vor TNF und am Sonntagmorgen). Bereits absolvierte Spieler werden nachträglich nicht „hochkorrigiert“.</p>
+    </section>
+
+    <section id="scoringarten" class="rule-card">
+      <h3>Scoring-Formate (Standard · Half-PPR · Full-PPR)</h3>
+      <p>Die Formate unterscheiden sich v. a. durch den Wert von Receptions:</p>
+      <ul class="list-tight">
+        <li><b>Standard (Non-PPR):</b> keine Punkte für Receptions → Runner mit vielen Carries/TD-Upside profitieren.</li>
+        <li><b>Half-PPR:</b> +0,5 pro Catch → guter Mix aus Rush- und Receiving-Volumen.</li>
+        <li><b>Full-PPR:</b> +1 pro Catch → Target-Monster (WR/Pass-Catching-RBs) gewinnen an Wert.</li>
+      </ul>
+      <p class="small muted"><b>Warum Half-PPR hier Standard ist:</b> Fairer Kompromiss – Runner bleiben relevant, Receiving-Volumen wird sinnvoll belohnt.</p>
+    </section>
+
+
+<section id="uebermich" class="rule-card">
+  <h3>Über mich</h3>
+  <p>Ich schaue seit vielen Jahren mit großer Begeisterung NFL und spiele selbst leidenschaftlich Fantasy Football. Dabei macht es mir Spaß, Statistiken zu durchforsten, Trends zu erkennen und meine Beobachtungen vom Gameday mit Zahlen zu verbinden.</p>
+  <p>Durch meinen technischen Hintergrund habe ich ein Faible für Daten und Analysen – am Ende sehe ich mich aber genauso als Fan wie jeder andere, der einfach Freude daran hat, Football zu verfolgen und mit Freunden Fantasy zu spielen.</p>
+  <p>Mit <b>FantasyBlitz</b> möchte ich die deutschsprachige Community für Fantasy Football und die NFL begeistern. 2025 ist das erste Jahr dieser Seite, und ich probiere laufend neue Ideen aus, erweitere die Tools und versuche die Rankings Schritt für Schritt besser zu machen.</p>
+  <p>Wenn du Feedback oder Ideen hast, freue ich mich, von dir zu hören – je mehr Austausch, desto besser wird die Seite für uns alle.</p>
+</section>
+  </main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a class="footer-link" href="impressum.html">Impressum</a> ·
+    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+  </p>
+</footer>
+
+<script>
+  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  (function(){
+    var start=2025, y=new Date().getFullYear();
+    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+  })();
+</script>
+
+
+</body>
+</html>
+>>>>>>> 322df387d7fa6200ac6153d3b17160cd5250b487

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="de">
 
@@ -308,3 +309,315 @@ function render() {
   </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="de">
+
+
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weekly Rankings – FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+<script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <a href="index.html">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+    </nav>
+  </header>
+
+<main class="rankings-page">
+  <div class="header-row">
+    <h2>Weekly Rankings 2025</h2>
+
+    <div class="header-right">
+      <div id="updateInfo" class="last-update">Letztes Update am: –</div>
+      <select id="weekSelector" class="position-button week-select"></select>
+    </div>
+  </div>
+
+<p class="intro-text">
+  Die Rankings basieren auf dem <span style="white-space:nowrap;">Half-PPR-Format</span> und werden vor jedem Spieltag aktualisiert – 
+  einschließlich eines letzten Updates sonntags vor den Kickoffs.  
+  Spieler, die bereits im Thursday-Night-Game gespielt haben, bleiben auf ihrer ursprünglichen Position.  
+  Mehr Details zum Scoring findest du auf der <a href="info.html">Info-Seite</a>.
+</p>
+
+  <div id="filterButtons">
+    <button class="position-button" onclick="filterRankings('QB')">QB</button>
+    <button class="position-button" onclick="filterRankings('RB')">RB</button>
+    <button class="position-button" onclick="filterRankings('WR')">WR</button>
+    <button class="position-button" onclick="filterRankings('TE')">TE</button>
+    <button class="position-button" onclick="filterRankings('FLEX')">FLEX</button>
+    <button class="position-button" onclick="filterRankings('DEF')">DEF</button>
+    <button class="position-button" onclick="filterRankings('Kicker')">Kicker</button>
+  </div>
+
+  <div id="rankingsContainer"></div>
+</main>
+
+
+<footer class="site-footer" role="contentinfo">
+  <p>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a class="footer-link" href="impressum.html">Impressum</a> ·
+    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+  </p>
+</footer>
+
+<script>
+  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  (function(){
+    var start=2025, y=new Date().getFullYear();
+    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+  })();
+</script>
+
+
+  <script>
+    const YEAR = "2025";
+    const MAX_WEEKS = 18;
+
+    //Struktur: die geladene Woche wird in separaten Listen gehalten
+    let rankings = { Flex: [], QB: [], DEF: [], Kicker: [] };
+    let activePosition = "QB";
+
+    const weekSelector = document.getElementById('weekSelector');
+    const container    = document.getElementById('rankingsContainer');
+    const updateEl     = document.getElementById('updateInfo');
+
+    weekSelector.addEventListener('change', () => loadWeek(weekSelector.value));
+
+    function filterRankings(position) {
+      activePosition = position;
+      render();
+      setActiveButton(position);
+    }
+
+    function setActiveButton(position) {
+      const buttons = document.querySelectorAll('#filterButtons button');
+      const target = String(position).toUpperCase();
+      buttons.forEach(btn => {
+        const txt = btn.textContent.trim().toUpperCase();
+        if (txt === target) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+    }
+
+    async function discoverAvailableWeeks(year, maxWeek=18) {
+      const found = [];
+      for (let w = 1; w <= maxWeek; w++) {
+        const url = `./data/${year}/week-${w}.json?v=${Date.now()}`;
+        try { const res = await fetch(url, { cache: "no-store" }); if (res.ok) found.push(w); } catch (_) {}
+      }
+      return found;
+    }
+
+    async function initWeeksAndLoad() {
+      weekSelector.disabled = true;
+      weekSelector.innerHTML = '<option>Lade verfügbare Wochen…</option>';
+
+      const weeks = await discoverAvailableWeeks(YEAR, MAX_WEEKS);
+
+      weekSelector.innerHTML = '';
+      if (weeks.length === 0) {
+        weekSelector.appendChild(new Option('Woche 1', '1'));
+        container.innerHTML = `<div class="notice-week-missing">Es wurden noch keine Wochen-Dateien gefunden.</div>`;
+        weekSelector.disabled = false;
+        return;
+      }
+
+      weeks.forEach(w => weekSelector.appendChild(new Option(`Woche ${w}`, String(w))));
+      weekSelector.value = String(weeks[0]);
+      weekSelector.disabled = false;
+
+      await loadWeek(weekSelector.value);
+      filterRankings(activePosition);
+    }
+
+    function formatLastModified(dateObj) {
+      try {
+        return new Intl.DateTimeFormat('de-CH', {
+          weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Zurich', hour12: false
+        }).format(dateObj);
+      } catch {
+        const pad = n => String(n).padStart(2,'0');
+        const d = pad(dateObj.getDate()), m = pad(dateObj.getMonth()+1), y = dateObj.getFullYear();
+        const hh = pad(dateObj.getHours()), mm = pad(dateObj.getMinutes());
+        const wd = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][dateObj.getDay()];
+        return `${wd}, ${d}.${m}.${y} ${hh}:${mm}`;
+      }
+    }
+
+    async function fetchJSONWithLastModified(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Datei nicht gefunden: ${url}`);
+
+      let lastModified = res.headers.get('Last-Modified');
+      if (!lastModified) {
+        try { const head = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+              lastModified = head.headers.get('Last-Modified'); } catch (_) {}
+      }
+
+      const data = await res.json();
+      return { data, lastModified: lastModified ? new Date(lastModified) : null };
+    }
+
+    function ensureRanks(list) {
+      // falls rank fehlt, 1..n vergeben
+      return list.map((p, i) => ({ ...p, rank: (p.rank ?? (i+1)) }));
+    }
+
+    async function loadWeek(week) {
+      const url = `./data/${YEAR}/week-${week}.json?v=${Date.now()}`;
+      try {
+        container.innerHTML = '<div style="padding:8px;color:#666;">Lade Rankings …</div>';
+        if (updateEl) updateEl.textContent = 'Letztes Update am: –';
+
+        const { data, lastModified } = await fetchJSONWithLastModified(url);
+
+        if (updateEl) updateEl.textContent = 'Letztes Update am: ' + formatLastModified(lastModified || new Date());
+
+        // NEU: Unterstütze Objekt-Format { Flex, QB, DEF, Kicker } ODER altes Array-Format
+        if (Array.isArray(data)) {
+          const arr = data.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+          rankings = {
+            Flex:   ensureRanks(arr.filter(p => ['RB','WR','TE'].includes((p.position||'').toUpperCase()))),
+            QB:     ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='QB')),
+            DEF:    ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='DEF')),
+            Kicker: ensureRanks(arr.filter(p => ['K','KICKER'].includes((p.position||'').toUpperCase())))
+          };
+        } else if (data && (data.Flex || data.QB || data.DEF || data.Kicker || data.K)) {
+          rankings = {
+            Flex:   ensureRanks(data.Flex   || []),
+            QB:     ensureRanks(data.QB     || []),
+            DEF:    ensureRanks(data.DEF    || []),
+            Kicker: ensureRanks(data.Kicker || data.K || [])
+          };
+        } else {
+          throw new Error('Unbekanntes Datenformat: erwarte Array oder Objekt mit Flex/QB/DEF/Kicker.');
+        }
+
+        render();
+        setActiveButton(activePosition);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = `<div class="notice-week-missing">Rangliste für <strong>Woche ${week}</strong> ist noch nicht verfügbar 🙂</div>`;
+        if (updateEl) updateEl.textContent = 'Letztes Update am: –';
+      }
+    }
+
+
+function basePos(pos){
+  const letters = String(pos || '').toUpperCase().match(/[A-Z]+/);
+  return letters ? letters[0] : '';
+}
+
+function normalizePosClass(raw){
+  const b = basePos(raw);
+  if (!b) return '';
+  if (b === 'K' || String(raw || '').toUpperCase() === 'KICKER') return 'Kicker';
+  return b; // QB, RB, WR, TE, DEF
+}
+
+// Anzeige-Limits (wie zuvor)
+const LIMITS = { FLEX: 100, WR: 50, RB: 50, TE: 30 };
+
+function render() {
+  container.innerHTML = '';
+
+  let list = [];
+  const tab = activePosition.toUpperCase();
+
+  if (tab === 'FLEX') {
+    // Flex exakt wie im JSON, Anzeige-Rank 1..n
+    const base = rankings.Flex.slice(0, LIMITS.FLEX ?? rankings.Flex.length);
+    list = base.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+  } else if (tab === 'QB') {
+    list = rankings.QB.slice().sort((a,b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  } else if (tab === 'DEF') {
+    list = rankings.DEF.slice().sort((a,b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  } else if (tab === 'KICKER' || tab === 'K') {
+    list = rankings.Kicker.slice().sort((a,b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+  } else if (['RB','WR','TE'].includes(tab)) {
+    // Aus Flex per Basis-Pos filtern (RB/WR/TE), limitieren, Anzeige-Rank 1..n
+    const base = rankings.Flex.filter(p => basePos(p.position) === tab);
+    const limited = base.slice(0, LIMITS[tab] ?? base.length);
+    list = limited.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+  }
+
+  list.forEach((player, idx) => {
+    const posClass = normalizePosClass(player.position);  
+    const card = document.createElement('div');
+    card.className = `ranking-card player-entry ${posClass}`;
+
+    // Rang-Anzeige: Flex & Positions-Views nutzen _displayRank, anderenfalls rank
+    const displayRank = player._displayRank ?? player.rank ?? (idx + 1);
+
+    card.innerHTML = `
+      <div class="ranking-number">${displayRank}</div>
+      <div class="ranking-info">
+        <div class="player-name">${escapeHtml(player.player || '')}</div>
+        <div class="meta">
+          <span class="position">${escapeHtml(player.position || '')}</span>
+          &nbsp;·&nbsp;<span class="team">${escapeHtml(player.team || '')}</span>
+          ${player.matchup ? `&nbsp;·&nbsp;<span class="matchup">${escapeHtml(player.matchup)}</span>` : ''}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // Nav-Highlight am Ende 
+    (function highlightNav() {
+      const currentPage = window.location.pathname.split("/").pop();
+      document.querySelectorAll("nav a").forEach(link => {
+        const linkPage = link.getAttribute("href");
+        if (linkPage === currentPage) link.classList.add("active");
+      });
+    })();
+
+    window.addEventListener('load', initWeeksAndLoad);
+  </script>
+</body>
+</html>
+>>>>>>> 322df387d7fa6200ac6153d3b17160cd5250b487

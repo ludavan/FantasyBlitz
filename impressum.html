@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="de">
 
@@ -131,3 +132,138 @@
   </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="de">
+
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Impressum – FantasyBlitz</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* nur hier: Titel↔Text enger, Blöcke klar getrennt */
+    .impressum-page .rule-card h3 { margin: 0 0 6px; }
+    .impressum-page .rule-card p  { margin: 0; }
+    .impressum-page .rule-card ul { margin: 0; padding-left: 18px; }
+    .impressum-page .rule-card + .rule-card { margin-top: 26px; }
+  </style>
+  <script>
+  (function () {
+    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
+    var PROD_HOSTS = []; 
+    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
+
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+<body class="impressum-page">
+  <header>
+    <div class="logo-container">
+      <a href="index.html">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+      </a>
+    </div>
+    <nav>
+      <a href="index.html">Startseite</a> |
+      <a href="rankings.html">Weekly Rankings</a> |
+      <a href="waivers.html">Waivers</a> |
+      <div class="dropdown">
+        <a href="#">Draft</a>
+        <div class="dropdown-content">
+          <a href="draft-2025.html">Draft Cheat Sheet</a>
+          <a href="draft-guide.html">Draft Guide</a>
+        </div>
+      </div> |
+      <a href="stats.html">Stats</a> |
+      <a href="info.html">Info</a>
+    </nav>
+  </header>
+
+  <main class="rankings-page">
+    <div class="header-row">
+      <h2>Impressum</h2>
+      <div class="header-right"></div>
+    </div>
+
+    <!-- Mindestangaben -->
+    <section class="rule-card" style="margin-top:12px">
+      <h3>Dienstanbieter / Betreiber</h3>
+      <p>
+        <strong>FantasyBlitz</strong><br />
+        <p><em>Mobile Ansicht in Bearbeitung – bitte vorübergehend die Desktop-Version nutzen.</em></p>
+      </p>
+
+      <!-- Optional (falls vorhanden) -->
+      <!-- <p>USt-IdNr. / UID / Registernummer: …</p> -->
+
+      <!-- Nur relevant, wenn du klar DE adressierst (journalistisch/redaktionell) -->
+      <!-- <p><strong>Verantwortlich i.S.d. § 18 Abs. 2 MStV (DE):</strong><br /> Vorname Nachname, Anschrift wie oben</p> -->
+    </section>
+
+
+
+
+    <section class="rule-card">
+      <h3>Haftung für Inhalte</h3>
+      <p>
+        Die Inhalte werden mit Sorgfalt gepflegt; eine Gewähr für Richtigkeit, Vollständigkeit und Aktualität
+        kann nicht übernommen werden. Hinweise auf Fehler oder Aktualisierungen sind willkommen.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>Haftung für Links</h3>
+      <p>
+        Für Inhalte externer Seiten sind ausschließlich deren Betreiber verantwortlich. Bei Verlinkung waren
+        keine Rechtsverstöße erkennbar; bei Kenntnis von Rechtsverletzungen werden entsprechende Links umgehend entfernt.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>Nutzungs- und Rechtehinweise</h3>
+      <p>
+        Sofern nicht anders gekennzeichnet, stammen Texte und Grafiken von FantasyBlitz. Die Nutzung der Inhalte
+        außerhalb der gesetzlichen Schranken (z.&nbsp;B. Zitatrecht) bedarf einer vorherigen Zustimmung.
+        Genannte Marken und Logos sind Eigentum der jeweiligen Rechteinhaber.
+      </p>
+    </section>
+
+    <section class="rule-card">
+      <h3>Quellenangaben</h3>
+      <p>
+        Statistik-/Datenquellen werden auf der Seite <a href="stats.html">Stats</a> ausgewiesen.
+      </p>
+    </section>
+
+    <p class="small muted" style="margin-top:40px;">Stand: <span id="imp-stand">2025-08-19</span></p>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <p>
+      © <span id="y">2025</span> FantasyBlitz ·
+      <a class="footer-link" href="impressum.html">Impressum</a> ·
+      <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+    </p>
+  </footer>
+
+  <script>
+    // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+    (function(){
+      var start=2025, y=new Date().getFullYear();
+      var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+    })();
+  </script>
+</body>
+</html>
+
+
+
+>>>>>>> 322df387d7fa6200ac6153d3b17160cd5250b487
