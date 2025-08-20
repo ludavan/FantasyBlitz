@@ -1,0 +1,516 @@
+:root {
+  --header-bg: #333333;
+  --header-bg-hover: #444444;
+  --header-h: 100px;       /* deine Headerhöhe bleibt gleich */
+  --header-clear: 28px;    /* Abstand unter dem Header (kannst du anpassen) */
+}
+
+@media (max-width:700px){
+  :root{
+    --header-h: 72px;
+    --header-clear: 18px;
+  }
+}
+
+/* Links */
+a { text-decoration: none; }
+
+/* Grundlayout */
+html { overflow-y: scroll; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  color: #222;
+  padding-top: 100px;
+}
+
+
+/* Header */
+header {
+  position: fixed;            /* neu: fixiert */
+  top: 0; left: 0; right: 0;  /* oben über volle Breite */
+  z-index: 1000;              /* über dem Content */
+
+  background-color: var(--header-bg);
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  padding: 0 20px;
+  gap: 40px;
+  overflow: visible;          /* position: relative; entfernen */
+}
+
+header::before,
+header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 400px;
+  height: 100%;
+  z-index: 0;
+}
+header::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255,255,255,0.95), rgba(255,255,255,0));
+}
+header::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255,255,255,0.95), rgba(255,255,255,0));
+}
+.logo-container { position: relative; z-index: 1; margin-left: 50px; }
+.logo-img { max-height: 90px; width: auto; }
+
+/* Navigation */
+nav {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+}
+nav a {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background-color .3s ease;
+  white-space: nowrap;
+}
+nav a:hover { background-color: rgba(255,255,255,0.1); }
+
+
+main {
+  max-width: 1600px;
+  width: 95%;
+  margin: 0 auto 60px;   
+  padding: 0 20px 80px;
+}
+
+main h2 {
+  font-size: 2rem;
+  margin-bottom: 0;
+  font-weight: 800;
+  color: #000;
+}
+
+
+/* Filter-Buttons (allgemein) */
+#filterButtons { text-align: center; margin: 25px 0 15px 0; }
+#filterButtons button,
+.position-button {
+  background-color: #fff;
+  border: 2px solid #000;
+  color: #000;
+  font-weight: 700;
+  padding: 10px 18px;
+  margin: 0 6px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all .3s ease;
+}
+#filterButtons button:hover,
+#filterButtons button.active,
+.position-button:hover,
+.position-button.active {
+  background-color: #000;
+  color: #fff;
+}
+
+.rankings-page { max-width:900px; margin:0 auto; padding:20px 20px 80px; }
+
+/* ===== Rankings-Seite (scoped) ===== */
+.rankings-page h2 {
+  margin: 10px 0 4px;          
+}
+
+.rankings-page .header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;          
+}
+
+.rankings-page .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;                 
+}
+
+.rankings-page .last-update {
+  font-size: 0.85rem;
+  color: #6b7280;             
+  white-space: nowrap;        
+}
+
+.rankings-page .week-select {
+  border: 2px solid #111;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 700;
+}
+
+.rankings-page .intro-text {
+  margin: 4px 0 30px;         
+  color: #4b5563;
+  line-height: 1.45;
+  max-width: 800px;
+}
+
+/* Filter-Buttons */
+.rankings-page #filterButtons {
+  margin: 8px 0 10px;
+  gap: 8px;
+}
+
+/* Karten */
+.rankings-page #rankingsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+  align-items: stretch;
+}
+
+.rankings-page .ranking-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.rankings-page .ranking-number {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  width: 32px;
+  text-align: right;
+  margin-right: 12px;
+}
+
+.rankings-page .ranking-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.rankings-page .player-name { font-weight: 700; text-align: left; width: 100%; }
+.rankings-page .meta        { font-size: .9rem; color: #666; width: 100%; }
+.rankings-page #filterButtons .position-button {
+  padding: 8px 12px; border-radius: 999px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; font-weight: 600;
+}
+.rankings-page #filterButtons .position-button.active {
+  background: #e2e8f0; border-color: #cbd5e1; color: #111; font-weight: 700;
+}
+
+/* Rankings – Grid-Layout */
+.rankings-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;              
+  margin-top: 10px;
+  padding: 0;
+}
+
+/* Draft-Cheat-Sheet Seite */
+.draft-page .rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.draft-page .position-column h3 {
+  margin: 6px 0;
+}
+
+.draft-page .subhead {
+  margin: 10px 0 6px;
+  font-size: 1.05rem;
+}
+
+.draft-page .divider {
+  height: 1px;
+  background: #ddd;
+  margin: 8px 0;
+  border: 0;
+}
+
+/* Spaltenbreiten von Flex entkoppeln */
+.position-column{ min-width: unset; max-width: unset; }
+
+/* Spieler-Eintrag */
+.player-entry {
+  font-size: .95rem;
+  padding: 6px 10px;
+  margin: 4px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: background-color .2s ease, transform .06s ease, box-shadow .15s ease;
+}
+.player-entry:hover { background-color: #f3f3f3; transform: translateY(-1px); }
+.player-entry.crossed { text-decoration: line-through; opacity: .6; background-color: #eee; }
+
+/* Positionsfarben – Hintergrund + linke Farbleiste */
+.player-entry.QB  { border-left: 6px solid #4da3ff; background: #4da3ff14; }
+.player-entry.WR { border-left: 6px solid #facc15; background: #facc1514; } 
+.player-entry.RB  { border-left: 6px solid #f97316; background: #f9731614; }
+.player-entry.TE  { border-left: 6px solid #c084fc; background: #c084fc14; }
+.player-entry.Kicker  { border-left: 6px solid #68d391; background: #68d39114; }
+.player-entry.DEF { border-left: 6px solid #94a3b8; background: #94a3b814; }
+
+
+
+/* Farben AUS: Hintergrund neutral, linke Leiste bleibt sichtbar (neutral) */
+body.no-pos-colors .player-entry.QB,
+body.no-pos-colors .player-entry.RB,
+body.no-pos-colors .player-entry.WR,
+body.no-pos-colors .player-entry.TE,
+body.no-pos-colors .player-entry.DEF,
+body.no-pos-colors .player-entry.Kicker{
+  background: none !important;
+  border-left: 6px solid #3a3a3a !important; 
+  color: inherit !important;
+  box-shadow: none !important;
+}
+
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 12px 0;
+  background-color: #2e2e2e;
+  color: #fff;
+  font-weight: 500;
+  font-size: .9rem;
+  position: static;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+}
+.site-footer {
+  color: #fff;               
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255,255,255,.15);
+}
+.site-footer p { margin: 0; }
+
+.site-footer .footer-link,
+.site-footer .footer-link:visited {
+  color: #fff;             
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+.site-footer .footer-link:hover,
+.site-footer .footer-link:focus {
+  border-bottom-color: rgba(255,255,255,.8);  
+  outline: none;
+}
+
+
+/* Dropdown */
+.dropdown { position: relative; display: inline-block; }
+.dropdown > a {
+  padding: 6px 12px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: color .3s ease;
+}
+.dropdown > a::after { content: " ▾"; font-size: .65em; margin-left: 4px; }
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 130%;
+  left: 0;
+  background-color: #eaeaea;
+  border-radius: 6px;
+  min-width: 150px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  z-index: 10;
+}
+.dropdown-content a {
+  display: block;
+  padding: 8px 12px;
+  font-size: .95rem;
+  color: #222;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color .2s ease;
+}
+.dropdown-content a:hover { background-color: #e0e0e0; }
+.dropdown:hover .dropdown-content { display: block; }
+
+/* Feature-Karten (Startseite) */
+.feature-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+}
+.feature-card {
+  background: #f8f8f8;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.feature-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.feature-card h3 { margin-top: 0; font-size: 1.3rem; }
+.feature-card p  { margin-bottom: 20px; font-size: 1rem; color: #444; }
+
+/* Buttons */
+.btn-dark {
+  background-color: #222;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  transition: background-color .3s ease;
+}
+.btn-dark:hover { background-color: #444; }
+
+/* Notices */
+.notice-week-missing{
+  padding: 12px 14px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #111;
+  color: #ddd;
+  max-width: 520px;
+}
+
+/* Toolbar */
+.draft-toolbar{
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 0 18px 0;
+  flex-wrap: wrap;
+}
+.btn-toggle{
+  appearance: none;
+  border: 1px solid #333;
+  background: #222;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+.btn-toggle:hover { background: #2b2b2b; border-color: #3d3d3d; }
+.btn-toggle:active { transform: scale(.98); }
+
+
+/* ---- Team-Farben (später) ---- */
+/* AFC East */
+.team-BUF{ background:#00338D; color:#FFF; }
+.team-MIA{ background:#008E97; color:#111; }
+.team-NE { background:#002244; color:#FFF; }
+.team-NYJ{ background:#125740; color:#FFF; }
+/* AFC North */
+.team-BAL{ background:#241773; color:#FFF; }
+.team-CIN{ background:#FB4F14; color:#111; }
+.team-CLE{ background:#311D00; color:#FFF; }
+.team-PIT{ background:#FFB612; color:#111; }
+/* AFC South */
+.team-HOU{ background:#03202F; color:#FFF; }
+.team-IND{ background:#003A70; color:#FFF; }
+.team-JAX{ background:#006778; color:#FFF; }
+.team-TEN{ background:#0C2340; color:#FFF; }
+/* AFC West */
+.team-DEN{ background:#FB4F14; color:#111; }
+.team-KC { background:#E31837; color:#FFF; }
+.team-LV { background:#000000; color:#FFF; }
+.team-LAC{ background:#0072CE; color:#FFF; }
+/* NFC East */
+.team-DAL{ background:#041E42; color:#FFF; }
+.team-NYG{ background:#0B2265; color:#FFF; }
+.team-PHI{ background:#004C54; color:#FFF; }
+.team-WAS{ background:#5A1414; color:#FFF; }
+/* NFC North */
+.team-CHI{ background:#0B162A; color:#FFF; }
+.team-DET{ background:#0076B6; color:#FFF; }
+.team-GB { background:#203731; color:#FFF; }
+.team-MIN{ background:#4F2683; color:#FFF; }
+/* NFC South */
+.team-ATL{ background:#A71930; color:#FFF; }
+.team-CAR{ background:#0085CA; color:#111; }
+.team-NO { background:#D3BC8D; color:#111; }
+.team-TB { background:#D50A0A; color:#FFF; }
+/* NFC West */
+.team-ARI{ background:#97233F; color:#FFF; }
+.team-LAR{ background:#003594; color:#FFF; }
+.team-SF { background:#AA0000; color:#FFF; }
+.team-SEA{ background:#002244; color:#FFF; }
+/* DEF / Fallback */
+.team-DEF{ background:#6b7280; color:#FFF; }
+.team-UNK{ background:#9ca3af; color:#111; }
+
+
+.rank-boxes {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.rank-card {
+  flex: 1;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+}
+
+/* Waiver: einheitliche Titelbalken */
+.waiver-section{
+  background: var(--header-bg);
+  color: #fff;
+  padding: 16px 20px;
+  margin: 30px 0 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
