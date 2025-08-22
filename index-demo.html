@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FantasyBlitz – Startseite</title>
+<style>
+  :root{ --header-h:92px; --header-h-m:70px; --bg:#fff; --text:#111; --muted:#60646c; --line:#e5e7eb; --accent:#333; --accent-hover:#444; --shadow:0 8px 24px rgba(0,0,0,.08); --radius:14px; --container:1180px; --bp:900px; }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:#f7f7f8;padding-top:var(--header-h)}
+  @media (max-width:900px){ body{padding-top:var(--header-h-m)} }
+  a{text-decoration:none;color:inherit}
+  .container{max-width:var(--container);margin:0 auto;padding:0 18px}
+
+  .site-header{position:fixed;inset:0 0 auto 0;height:var(--header-h);background:var(--bg);color:var(--text);border-bottom:1px solid var(--line);z-index:1000}
+  @media (max-width:900px){.site-header{height:var(--header-h-m)}}
+  .header-inner{height:100%;display:flex;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:calc(100% - 20px);max-height:64px;width:auto;display:block}
+  @media (max-width:900px){ .brand img{max-height:52px} }
+
+  .nav-desktop{margin-left:auto}
+  .nav-list{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:12px}
+  .nav-list>li>a,.nav-list>li>button.nav-link{display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border-radius:10px;font-weight:700;color:var(--text);background:transparent;border:1px solid transparent}
+  .nav-list>li>a:hover,.nav-list>li>button.nav-link:hover{background:#f2f2f3}
+  .nav-list a.active{outline:2px solid #e2e8f0;border-radius:10px}
+  .dropdown{position:relative}
+  .nav-link{cursor:pointer;background:none;border:0}
+  .submenu{position:absolute;left:0;top:calc(100% + 8px);display:none;min-width:220px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:8px;z-index:10}
+  .submenu a{display:block;padding:10px 12px;border-radius:10px}
+  .submenu a:hover{background:#f3f4f6}
+  .dropdown:hover .submenu{display:block}
+  .nav-caret::after{content:" ▾";font-size:.85em}
+
+  .nav-toggle{margin-left:auto;display:none;width:44px;height:44px;border-radius:10px;border:0;background:transparent;cursor:pointer}
+  .nav-toggle .bar{width:22px;height:2px;background:#222;margin:4px 0;display:block}
+  .nav-toggle:focus-visible{outline:2px solid #222;outline-offset:2px}
+
+  .overlay[hidden]{display:none}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999}
+
+  /* 👉 WICHTIG: Mobile-Panel auf Desktop AUS */
+  .nav-panel{display:none;}
+
+  @media (max-width:900px){
+    .nav-desktop{display:none}
+    .nav-toggle{display:flex;align-items:center;justify-content:center}
+    .nav-panel{position:fixed;left:0;right:0;top:var(--header-h-m);bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:16px;display:none;flex-direction:column;gap:10px;z-index:1001;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .nav-panel.open{display:flex}
+    .nav-panel a,.nav-panel button.nav-link{width:100%;text-align:left;padding:14px;border-radius:12px;font-weight:800;background:#f6f7f8;border:1px solid var(--line)}
+    .nav-panel a:hover,.nav-panel button.nav-link:hover{background:#eef0f2}
+    .nav-panel .dropdown{position:static}
+    .nav-panel .dropdown .submenu{position:static;display:none;margin-top:8px;padding:8px;border-radius:10px;border:1px solid var(--line);background:#fff}
+    .nav-panel .dropdown.open .submenu{display:block}
+  }
+
+  .hero{text-align:center;padding:12px 0 16px}
+  .hero .hero-logo{width:300px;max-width:80%;height:auto;display:block;margin:0 auto 8px}
+  .tagline{margin:0 auto 34px;font-size:1.2rem;line-height:1.6;color:#60646c;max-width:740px;padding:0 12px}
+
+  .feature-grid{display:grid;gap:22px;grid-template-columns:repeat(12,1fr)}
+  .feature-card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:12px}
+  .feature-card img{width:100%;height:auto;border-radius:12px;display:block}
+  .feature-card h3{margin:0;font-size:1.2rem}
+  .feature-card p{margin:0 0 8px;color:#60646c}
+  .col-4{grid-column:span 4} .col-6{grid-column:span 6} .col-12{grid-column:span 12}
+  @media (max-width:1100px){.col-md-6{grid-column:span 6}}
+  @media (max-width:900px){.feature-grid{grid-template-columns:repeat(6,1fr)} .col-sm-6{grid-column:span 6}}
+  @media (max-width:560px){.feature-grid{grid-template-columns:repeat(4,1fr)} .col-xs-4{grid-column:span 4}}
+  .btn{display:inline-block;padding:10px 14px;border-radius:12px;background:#333;color:#fff;font-weight:700;border:1px solid #333}
+  .btn:hover{background:#444}
+  .spacer{height:24px}
+  footer{text-align:center;padding:24px 0;color:#666}
+</style>
+
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Startseite">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+      </a>
+
+      <!-- Desktop-Navigation -->
+      <nav class="nav-desktop" aria-label="Hauptnavigation">
+        <ul class="nav-list">
+          <li><a href="index.html">Startseite</a></li>
+          <li><a href="rankings.html">Weekly Rankings</a></li>
+          <li><a href="waivers.html">Waivers</a></li>
+          <li class="dropdown">
+            <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
+            <div class="submenu" role="menu">
+              <a href="draft-2025.html">Draft Cheat Sheet</a>
+              <a href="draft-guide.html">Draft Guide</a>
+            </div>
+          </li>
+          <li><a href="stats.html">Stats</a></li>
+          <li><a href="info.html">Info</a></li>
+        </ul>
+      </nav>
+
+      <!-- Burger (nur mobil sichtbar) -->
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Panel + Overlay -->
+  <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
+    <a href="index.html">Startseite</a>
+    <a href="rankings.html">Weekly Rankings</a>
+    <a href="waivers.html">Waivers</a>
+    <div class="dropdown">
+      <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
+      <div class="submenu">
+        <a href="draft-2025.html">Draft Cheat Sheet</a>
+        <a href="draft-guide.html">Draft Guide</a>
+      </div>
+    </div>
+    <a href="stats.html">Stats</a>
+    <a href="info.html">Info</a>
+  </nav>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ===== CONTENT ===== -->
+  <main>
+    <section class="hero container">
+      <!-- Du wolltest hier dein Logo als Hero beibehalten -->
+      <img class="hero-logo" src="img/fantasyblitz-logo.png" alt="FantasyBlitz Schriftzug" />
+      <p class="tagline">
+        Der Fantasy Football Guide aus der deutschsprachigen Community – mit wöchentlichen Rankings,
+        Waiver-Tipps und interaktiven Tools, die dir helfen, deine Liga zu dominieren.
+      </p>
+    </section>
+
+    <section class="container feature-grid">
+      <!-- Weekly Rankings -->
+      <article class="feature-card col-4 col-md-6 col-sm-6 col-xs-4">
+        <img src="img/weekly-rankings-hero.png" alt="Weekly Rankings" />
+        <h3>Weekly Rankings</h3>
+        <p>Topaktuelle Spieler-Rankings pro Woche für jede Position – direkt aus unserer Fantasy-Analyse.</p>
+        <a href="rankings.html" class="btn">Rankings ansehen</a>
+      </article>
+
+      <!-- Waivers -->
+      <article class="feature-card col-4 col-md-6 col-sm-6 col-xs-4">
+        <img src="img/waiver-hero.png" alt="Top Waivers" />
+        <h3>Top Waiver Picks</h3>
+        <p>Wöchentliche Empfehlungen für Free Agents mit Breakout-Potenzial.</p>
+        <a href="waivers.html" class="btn">Zu den Waivers</a>
+      </article>
+
+      <!-- Stats -->
+      <article class="feature-card col-4 col-md-6 col-sm-6 col-xs-4">
+        <img src="img/stats-hero.png" alt="Statistiken" />
+        <h3>Fantasy Statistiken</h3>
+        <p>Eigene Charts & Tools für echte Fantasy-Nerds – mit tiefen Team- und Spieleranalysen sowie Trend-Insights.</p>
+        <a href="stats.html" class="btn">Statistiken ansehen</a>
+      </article>
+
+      <!-- Draft Rankings -->
+      <article class="feature-card col-4 col-md-6 col-sm-6 col-xs-4">
+        <img src="img/draft-rankings-hero.png" alt="Draft Rankings" />
+        <h3>Draft Rankings</h3>
+        <p>Unsere Top-Spieler für deinen Draft – mit interaktivem Cheat-Sheet für dein Live-Board.</p>
+        <a href="draft-2025.html" class="btn">Zu den Draft Rankings</a>
+      </article>
+    </section>
+
+    <div class="spacer"></div>
+  </main>
+
+  <footer>
+    © <span id="y">2025</span> FantasyBlitz ·
+    <a href="impressum.html">Impressum</a> ·
+    <a href="datenschutz.html">Datenschutz</a>
+  </footer>
+
+  <script>
+    // Jahr aktualisieren
+    (function(){
+      var start=2025, y=new Date().getFullYear();
+      var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+    })();
+
+    // Aktuellen Link markieren (Desktop & Mobil)
+    (function(){
+      const current = location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('a[href]').forEach(a=>{
+        if(a.getAttribute('href') === current) a.classList.add('active');
+      });
+    })();
+
+    // Mobile Menü Logik
+    const toggleBtn = document.querySelector('.nav-toggle');
+    const panel = document.getElementById('navPanel');
+    const overlay = document.getElementById('overlay');
+    const draftToggleMobile = document.getElementById('draftToggle');
+    const mql = window.matchMedia('(max-width: 900px)');
+
+    function openMenu(){
+      panel.classList.add('open');
+      overlay.hidden = false;
+      toggleBtn.setAttribute('aria-expanded','true');
+      document.body.style.overflow='hidden';
+    }
+    function closeMenu(){
+      panel.classList.remove('open');
+      overlay.hidden = true;
+      toggleBtn.setAttribute('aria-expanded','false');
+      document.body.style.overflow='';
+      const dd = panel.querySelector('.dropdown');
+      if(dd){ dd.classList.remove('open'); draftToggleMobile?.setAttribute('aria-expanded','false'); }
+    }
+
+    toggleBtn.addEventListener('click', ()=>{ panel.classList.contains('open') ? closeMenu() : openMenu(); });
+    overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+
+    // Mobiles Draft-Submenu (Accordion)
+    draftToggleMobile.addEventListener('click', ()=>{
+      const dd = draftToggleMobile.closest('.dropdown');
+      const isOpen = dd.classList.toggle('open');
+      draftToggleMobile.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Beim Wechsel auf Desktop schließen
+    mql.addEventListener('change', e => { if(!e.matches) closeMenu(); });
+  </script>
+</body>
+</html>
