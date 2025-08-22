@@ -1,11 +1,12 @@
 :root {
   --header-bg: #333333;
   --header-bg-hover: #444444;
-  --header-h: 100px;       /* deine Headerhöhe bleibt gleich */
-  --header-clear: 28px;    /* Abstand unter dem Header (kannst du anpassen) */
+  --header-h: 100px;       /* Desktop-Headerhöhe */
+  --header-clear: 28px;    /* Abstand unter dem Header (optional) */
 }
 
-@media (max-width:700px){
+/* Mobile Variablen */
+@media (max-width:900px){
   :root{
     --header-h: 72px;
     --header-clear: 18px;
@@ -23,7 +24,7 @@ body {
   margin: 0;
   padding: 0;
   color: #222;
-  padding-top: var(--header-h); /* fix: dynamisch statt 100px */
+  padding-top: var(--header-h); /* dynamisch */
 }
 
 /* Header */
@@ -33,7 +34,7 @@ header {
   z-index: 1000;              /* über dem Content */
 
   background-color: var(--header-bg);
-  height: var(--header-h);    /* fix: dynamisch */
+  height: var(--header-h);    /* dynamisch */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -52,7 +53,7 @@ header::after {
   width: 400px;
   height: 100%;
   z-index: 0;
-  pointer-events: none; /* fix: blockiert keine Klicks mehr */
+  pointer-events: none; /* Deko blockiert keine Klicks */
 }
 header::before {
   left: 0;
@@ -65,16 +66,18 @@ header::after {
 .logo-container { position: relative; z-index: 1; margin-left: 50px; }
 .logo-img { max-height: 90px; width: auto; }
 
-/* Navigation (Desktop) */
-nav {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%,-50%);
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  z-index: 1;
+/* Navigation: Desktop-Positionierung nur ab 901px */
+@media (min-width:901px){
+  nav {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 1;
+  }
 }
 nav a {
   color: #fff;
@@ -216,8 +219,8 @@ footer { text-align: center; padding: 12px 0; background-color: #2e2e2e; color: 
 .btn-toggle:hover { background: #2b2b2b; border-color: #3d3d3d; }
 .btn-toggle:active { transform: scale(.98); }
 
-/* ---- Team-Farben ---- */
-/* (… unverändert …) */
+/* ---- Team-Farben (deine bestehenden Klassen bleiben) ---- */
+/* (hier unverändert belassen) */
 
 .rank-boxes { display: flex; gap: 16px; justify-content: space-between; margin-top: 10px; }
 .rank-card { flex: 1; min-height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1.4rem; font-weight: 800; color: white; }
@@ -226,36 +229,36 @@ footer { text-align: center; padding: 12px 0; background-color: #2e2e2e; color: 
 .waiver-section{ background: var(--header-bg); color: #fff; padding: 16px 20px; margin: 30px 0 20px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
 
 /* ===== Burger-Button (Desktop verstecken) ===== */
-.nav-toggle { display: none; background: transparent; border: 0; width: 44px; height: 44px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; z-index: 1002; }
+.nav-toggle { display: none; background: transparent; border: 0; width: 44px; height: 44px; border-radius: 10px; align-items: center; justify-content: center; cursor: pointer; z-index: 1003; }
 .nav-toggle .bar { display: block; width: 22px; height: 2px; margin: 4px 0; background: #fff; }
 .nav-toggle:focus { outline: 2px solid #fff; outline-offset: 2px; }
 
 /* Overlay (außerhalb Header) */
 .menu-overlay[hidden] { display: none; }
-.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 900; }
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1001; }
 
-/* ===== Mobile Navigation (<=700px) ===== */
-@media (max-width: 700px) {
+/* ===== Mobile Navigation (<=900px) ===== */
+@media (max-width: 900px) {
   /* Header kompakter */
   header { padding: 0 12px; gap: 12px; }
   header::before, header::after { display: none; }
   .logo-container { margin-left: 0; }
   .logo-img { max-height: 56px; }
 
-  /* Desktop-Nav-Positionierung lösen */
+  /* Desktop-Nav-Positionierung lösen (falls CSS geladen war) */
   nav { position: static; left: auto; top: auto; transform: none; }
 
   /* Burger zeigen */
   .nav-toggle { display: flex; margin-left: auto; }
 
-  /* Mobile-Menü: Full-width Panel, scrollbar bis unten */
+  /* Mobile-Menü: Fullscreen unter dem Header, scrollbar */
   nav.main-nav {
     position: fixed; left: 0; right: 0; top: var(--header-h); bottom: 0;
-    display: none; /* per .open sichtbar */
+    display: none; /* via .open sichtbar */
     flex-direction: column; gap: 10px;
     padding: 16px 14px 24px;
     background: #1b1d22; border-bottom: 1px solid #2a2e36;
-    z-index: 1001; /* über Overlay, unter Burger */
+    z-index: 1002; /* über Overlay & Content, unter Burger */ 
     overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   nav.main-nav.open { display: flex; }
@@ -279,6 +282,6 @@ footer { text-align: center; padding: 12px 0; background-color: #2e2e2e; color: 
   }
   .dropdown.open .dropdown-content { display: flex; }
 
-  /* Feature-Karten mobil 1-spaltig, damit nichts quetscht */
+  /* Feature-Karten 1-spaltig auf Mobil */
   .feature-grid { grid-template-columns: 1fr; gap: 16px; padding: 0 12px 28px; }
 }
