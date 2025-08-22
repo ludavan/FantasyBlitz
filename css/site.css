@@ -29,13 +29,15 @@ body.site-v2 a{ color: inherit; text-decoration: none; }
 /* Reset alte globale header/nav Regeln, damit nichts kollidiert */
 body.site-v2 header::before,
 body.site-v2 header::after{display:none!important;content:none!important}
-body.site-v2 nav{
-  position: static!important;
-  left:auto!important; right:auto!important; top:auto!important;
-  transform:none!important;
-  background:transparent!important;
-  box-shadow:none!important;
+/* Reset nur für Desktop-Nav, NICHT fürs mobile Panel */
+body.site-v2 nav:not(.nav-panel){
+  position: static;
+  left:auto; right:auto; top:auto;
+  transform:none;
+  background:transparent;
+  box-shadow:none;
 }
+
 
 /* ===== Fixierter heller Header ===== */
 body.site-v2 .site-header{
@@ -68,10 +70,13 @@ body.site-v2 .nav-list>li>a,
 body.site-v2 .nav-list>li>button.nav-link{
   display:inline-flex; align-items:center; gap:6px;
   padding:10px 14px; border-radius:10px;
-  font-weight:700; color:var(--text);
+  font-weight:600;   
+  color:var(--text);
   background:transparent; border:1px solid transparent;
-  font: inherit; /* gleiche Schrift auch für Button „Draft“ */
+  font-family: inherit; /* nur Schriftfamilie erben */
+  font-size: inherit;   /* optional, falls Größe gleich bleiben soll */
 }
+
 body.site-v2 .nav-list>li>a:hover,
 body.site-v2 .nav-list>li>button.nav-link:hover{ background:#f2f2f3; }
 
@@ -85,7 +90,11 @@ body.site-v2 .submenu{
   background:#fff; border:1px solid var(--line); border-radius:12px;
   box-shadow:var(--shadow); z-index:1002; /* über allem klickbar */
 }
-body.site-v2 .submenu a{ display:block; padding:10px 12px; border-radius:10px; }
+body.site-v2 .submenu a{
+  display:block; padding:10px 12px; border-radius:10px;
+  font-weight:400;   /* NEU → normal statt fett */
+}
+
 body.site-v2 .submenu a:hover{ background:#f3f4f6; }
 body.site-v2 .dropdown:hover .submenu{ display:block; }
 
@@ -121,11 +130,22 @@ body.site-v2 .nav-panel{ display:none; }
     font: inherit;
   }
   body.site-v2 .nav-panel a:hover, body.site-v2 .nav-panel button.nav-link:hover{ background:#eef0f2; }
-
-  body.site-v2 .nav-panel .dropdown{ position:static; }
+  body.site-v2 .nav-panel .dropdown{
+    position: static;
+    display: block;         /* überschreibt style.css (inline-block) */
+    width: 100%;
+  }
+  body.site-v2 .nav-panel .dropdown > .nav-link{
+    display: block;         /* Button verhält sich wie die Links */
+    width: 100%;
+    text-align: left;
+  }
   body.site-v2 .nav-panel .dropdown .submenu{
-    position:static; display:none; margin-top:8px; padding:8px;
-    border:1px solid var(--line); border-radius:10px; background:#fff;
+    position: static;
+    display: none;
+    margin-top: 8px; padding: 8px;
+    border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    width: 100%;
   }
   body.site-v2 .nav-panel .dropdown.open .submenu{ display:block; }
   body.site-v2 .nav-panel .dropdown.open .nav-caret::after{ content:" ▴"; }
@@ -144,3 +164,55 @@ body.site-v2 .btn-dark{
 }
 body.site-v2 a.btn-dark:hover,
 body.site-v2 .btn-dark:hover{ background: var(--accent-hover) !important; }
+
+/* Overlay für mobiles Menü */
+.overlay[hidden]{ display:none; }
+.overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 1000;
+}
+
+/* nav panel must sit above overlay */
+.nav-panel{ z-index:1001; }
+
+
+/* Mobiles Panel über Overlay */
+.nav-panel{ z-index: 1001; }
+
+@media (max-width:900px){
+  body.site-v2 .nav-panel{
+    position: fixed !important;
+    left: 0; right: 0; top: var(--header-h-m); bottom: 0;
+    z-index: 1001;                 /* über .overlay (1000) */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  body.site-v2 .nav-panel.open{ display: flex; }
+}
+
+/* --- Heller Footer im gleichen Stil wie der Header --- */
+body.site-v2 footer,
+body.site-v2 .site-footer{
+  background: var(--bg);
+  color: var(--text);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -3px 12px rgba(0,0,0,.06);
+  padding: 20px 0;
+}
+
+body.site-v2 .site-footer p{
+  margin: 0;
+  text-align: center;
+}
+
+body.site-v2 .site-footer .footer-link{
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+body.site-v2 .site-footer .footer-link:hover{
+  border-bottom-color: #cbd5e1;
+}
