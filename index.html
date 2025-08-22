@@ -34,26 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <body>
-  <header>
-      <div class="logo-container">
-        <a href="index.html">
-          <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
-        </a>
-      </div>
-  <nav>
-      <a href="index.html">Startseite</a> |
-      <a href="rankings.html">Weekly Rankings</a> |
-      <a href="waivers.html">Waivers</a> |
-  <div class="dropdown">
-    <a href="#">Draft</a>
-    <div class="dropdown-content">
-      <a href="draft-2025.html">Draft Cheat Sheet</a>
-      <a href="draft-guide.html">Draft Guide</a>
-    </div>
-  </div> |
-      <a href="stats.html">Stats</a> |
-      <a href="info.html">Info</a>
-  </nav>
+<header>
+<div class="logo-container">
+<a href="index.html">
+<img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+</a>
+</div>
+
+
+<!-- Mobile Burger Button -->
+<button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+<span class="bar"></span>
+<span class="bar"></span>
+<span class="bar"></span>
+</button>
+
+
+<!-- Hauptnavigation -->
+<nav class="main-nav">
+<a href="index.html">Startseite</a>
+<a href="rankings.html">Weekly Rankings</a>
+<a href="waivers.html">Waivers</a>
+<div class="dropdown">
+<a href="#" class="dropdown-trigger">Draft</a>
+<div class="dropdown-content">
+<a href="draft-2025.html">Draft Cheat Sheet</a>
+<a href="draft-guide.html">Draft Guide</a>
+</div>
+</div>
+<a href="stats.html">Stats</a>
+<a href="info.html">Info</a>
+</nav>
 </header>
 
 
@@ -159,6 +170,44 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+const toggle = document.querySelector('.nav-toggle');
+const nav = document.querySelector('nav.main-nav');
+const dropdownTrigger = document.querySelector('.dropdown .dropdown-trigger');
+
+
+// Burger: Menü ein/aus
+if (toggle && nav) {
+toggle.addEventListener('click', () => {
+const isOpen = nav.classList.toggle('open');
+toggle.setAttribute('aria-expanded', String(isOpen));
+});
+}
+
+
+// Draft-Dropdown mobil per Tap auf/zu
+if (dropdownTrigger) {
+dropdownTrigger.addEventListener('click', (e) => {
+if (window.matchMedia('(max-width: 700px)').matches) {
+e.preventDefault();
+dropdownTrigger.parentElement.classList.toggle('open');
+}
+});
+}
+
+
+// Beim Klick auf Links im mobilen Menü wieder schließen
+nav?.querySelectorAll('a').forEach(a => {
+a.addEventListener('click', () => {
+if (window.matchMedia('(max-width: 700px)').matches) {
+nav.classList.remove('open');
+toggle?.setAttribute('aria-expanded', 'false');
+}
+});
+});
+});
+</script>
 
 </body>
 </html>
