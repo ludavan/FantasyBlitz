@@ -9,6 +9,8 @@
   <title>Waivers – FantasyBlitz</title>
   <link rel="stylesheet" href="css/style.css" />
 
+  
+  <link rel="stylesheet" href="css/site.css" />
   <style>
     /* Titelbalken */
     .waiver-section {
@@ -110,28 +112,49 @@
 </script>
 </head>
 
-<body>
-  <header>
-    <div class="logo-container">
-      <a href="index.html">
-        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
-      </a>
-    </div>
-    <nav>
-      <a href="index.html">Startseite</a> |
-      <a href="rankings.html">Weekly Rankings</a> |
-      <a href="waivers.html">Waivers</a> |
-      <div class="dropdown">
-        <a href="#">Draft</a>
-        <div class="dropdown-content">
-          <a href="draft-2025.html">Draft Cheat Sheet</a>
-          <a href="draft-guide.html">Draft Guide</a>
-        </div>
-      </div> |
-      <a href="stats.html">Stats</a> |
-      <a href="info.html">Info</a>
+<body class="site-v2 site-v2">
+  <header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Startseite">
+      <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+    </a>
+    <nav class="nav-desktop" aria-label="Hauptnavigation">
+      <ul class="nav-list">
+        <li><a href="index.html">Startseite</a></li>
+        <li><a href="rankings.html">Weekly Rankings</a></li>
+        <li><a href="waivers.html">Waivers</a></li>
+        <li class="dropdown">
+          <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
+          <div class="submenu" role="menu">
+            <a href="draft-2025.html">Draft Cheat Sheet</a>
+            <a href="draft-guide.html">Draft Guide</a>
+          </div>
+        </li>
+        <li><a href="stats.html">Stats</a></li>
+        <li><a href="info.html">Info</a></li>
+      </ul>
     </nav>
-  </header>
+    <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+  </div>
+</header>
+
+<nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
+  <a href="index.html">Startseite</a>
+  <a href="rankings.html">Weekly Rankings</a>
+  <a href="waivers.html">Waivers</a>
+  <div class="dropdown">
+    <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
+    <div class="submenu">
+      <a href="draft-2025.html">Draft Cheat Sheet</a>
+      <a href="draft-guide.html">Draft Guide</a>
+    </div>
+  </div>
+  <a href="stats.html">Stats</a>
+  <a href="info.html">Info</a>
+</nav>
+<div class="overlay" id="overlay" hidden></div>
 
 <main class="rankings-page">
 <div class="header-row">
@@ -302,5 +325,81 @@ Streamer sind kurzfristige Optionen für eine einzelne Woche – ideal, wenn du 
       });
     }
   </script>
+<script>
+// Aktiven Link markieren (ohne Unterstreichung)
+(function(){
+  const current = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('a[href]').forEach(a=>{
+    if(a.getAttribute('href') === current) a.classList.add('active');
+  });
+})();
+
+// Mobile Menü
+(function(){
+  const toggleBtn = document.querySelector('.nav-toggle');
+  const panel = document.getElementById('navPanel');
+  const overlay = document.getElementById('overlay');
+  const draftToggleMobile = document.getElementById('draftToggle');
+  const mql = window.matchMedia('(max-width: 900px)');
+
+  function openMenu(){
+    if(panel){ panel.classList.add('open'); }
+    if(overlay){ overlay.hidden = false; }
+    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','true'); }
+    document.body.style.overflow='hidden';
+  }
+  function closeMenu(){
+    if(panel){ panel.classList.remove('open'); }
+    if(overlay){ overlay.hidden = true; }
+    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','false'); }
+    document.body.style.overflow='';
+    const dd = panel ? panel.querySelector('.dropdown') : null;
+    if(dd){ dd.classList.remove('open'); }
+    if(draftToggleMobile){ draftToggleMobile.setAttribute('aria-expanded','false'); }
+  }
+
+  if(toggleBtn) toggleBtn.addEventListener('click', ()=>{
+    panel && panel.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  if(overlay) overlay.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+
+  if(draftToggleMobile){
+    draftToggleMobile.addEventListener('click', ()=>{
+      const dd = draftToggleMobile.closest('.dropdown');
+      const isOpen = dd.classList.toggle('open');
+      draftToggleMobile.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+
+  mql.addEventListener('change', e => { if(!e.matches) closeMenu(); });
+})();
+</script>
+
+<script>
+// Highlight current link
+(function(){
+  const current = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('a[href]').forEach(a=>{
+    if(a.getAttribute('href')===current) a.classList.add('active');
+  });
+})();
+// Mobile burger
+(function(){
+  const toggleBtn = document.querySelector('.nav-toggle');
+  const panel = document.getElementById('navPanel');
+  const overlay = document.getElementById('overlay');
+  const draftToggle = document.getElementById('draftToggle');
+  const mql = window.matchMedia('(max-width: 900px)');
+  function openM(){ panel?.classList.add('open'); if(overlay) overlay.hidden=false; toggleBtn?.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  function closeM(){ panel?.classList.remove('open'); if(overlay) overlay.hidden=true; toggleBtn?.setAttribute('aria-expanded','false'); document.body.style.overflow=''; const dd=panel?.querySelector('.dropdown'); dd&&dd.classList.remove('open'); draftToggle?.setAttribute('aria-expanded','false'); }
+  toggleBtn?.addEventListener('click',()=>{ panel?.classList.contains('open')?closeM():openM(); });
+  overlay?.addEventListener('click', closeM);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeM(); });
+  draftToggle?.addEventListener('click', ()=>{ const dd=draftToggle.closest('.dropdown'); const isOpen=dd.classList.toggle('open'); draftToggle.setAttribute('aria-expanded', String(isOpen)); });
+  mql.addEventListener('change', e=>{ if(!e.matches) closeM(); });
+})();
+</script>
+
 </body>
 </html>
