@@ -1,60 +1,73 @@
 <!DOCTYPE html>
 <html lang="de">
-
-
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Impressum – FantasyBlitz</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/site.css" />
   <style>
-    /* nur hier: Titel↔Text enger, Blöcke klar getrennt */
-    .impressum-page .rule-card h3 { margin: 0 0 6px; }
-    .impressum-page .rule-card p  { margin: 0; }
-    .impressum-page .rule-card ul { margin: 0; padding-left: 18px; }
-    .impressum-page .rule-card + .rule-card { margin-top: 26px; }
+    /* Seiteninterner Feinschliff, kollisionsfrei */
+    .impressum-wrap { max-width: 900px; margin: 0 auto; }
+    .impressum-wrap .rule-card h3 { margin: 0 0 6px; }
+    .impressum-wrap .rule-card p  { margin: 0; }
+    .impressum-wrap .rule-card ul { margin: 0; padding-left: 18px; }
+    .impressum-wrap .rule-card + .rule-card { margin-top: 26px; }
+    .impressum-wrap .muted { color: var(--muted); }
+    .impressum-wrap .small { font-size: .95rem; }
   </style>
-  <script>
-  (function () {
-    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
-    var PROD_HOSTS = []; 
-    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
-
-    var s = document.createElement('script');
-    s.defer = true;
-    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
-    document.head.appendChild(s);
-  })();
-</script>
 </head>
-<body class="impressum-page">
-  <header>
-    <div class="logo-container">
-      <a href="index.html">
-        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" class="logo-img" />
+<body class="site-v2">
+
+  <!-- Header (wie auf allen Seiten) -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Startseite">
+        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
       </a>
+      <nav class="nav-desktop" aria-label="Hauptnavigation">
+        <ul class="nav-list">
+          <li><a href="index.html">Startseite</a></li>
+          <li><a href="rankings.html">Weekly Rankings</a></li>
+          <li><a href="waivers.html">Waivers</a></li>
+          <li class="dropdown">
+            <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
+            <div class="submenu" role="menu">
+              <a href="draft-2025.html">Draft Cheat Sheet</a>
+              <a href="draft-guide.html">Draft Guide</a>
+            </div>
+          </li>
+          <li><a href="stats.html">Stats</a></li>
+          <li><a href="info.html">Info</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
     </div>
-    <nav>
-      <a href="index.html">Startseite</a> |
-      <a href="rankings.html">Weekly Rankings</a> |
-      <a href="waivers.html">Waivers</a> |
-      <div class="dropdown">
-        <a href="#">Draft</a>
-        <div class="dropdown-content">
-          <a href="draft-2025.html">Draft Cheat Sheet</a>
-          <a href="draft-guide.html">Draft Guide</a>
-        </div>
-      </div> |
-      <a href="stats.html">Stats</a> |
-      <a href="info.html">Info</a>
-    </nav>
   </header>
 
-  <main class="rankings-page">
-    <div class="header-row">
-      <h2>Impressum</h2>
+  <!-- Mobiles Panel + Overlay -->
+  <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
+    <a href="index.html">Startseite</a>
+    <a href="rankings.html">Weekly Rankings</a>
+    <a href="waivers.html">Waivers</a>
+    <div class="dropdown">
+      <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
+      <div class="submenu">
+        <a href="draft-2025.html">Draft Cheat Sheet</a>
+        <a href="draft-guide.html">Draft Guide</a>
+      </div>
+    </div>
+    <a href="stats.html">Stats</a>
+    <a href="info.html">Info</a>
+  </nav>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- Inhalt -->
+  <main class="container impressum-wrap" style="padding:20px 18px 60px;">
+    <div class="header-row" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;">
+      <h2 style="margin:10px 0 4px;">Impressum</h2>
       <div class="header-right"></div>
     </div>
 
@@ -75,9 +88,6 @@
       <!-- Nur relevant, wenn du klar DE adressierst (journalistisch/redaktionell) -->
       <!-- <p><strong>Verantwortlich i.S.d. § 18 Abs. 2 MStV (DE):</strong><br /> Vorname Nachname, Anschrift wie oben</p> -->
     </section>
-
-
-
 
     <section class="rule-card">
       <h3>Haftung für Inhalte</h3>
@@ -128,6 +138,60 @@
       var start=2025, y=new Date().getFullYear();
       var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
     })();
+  </script>
+
+  <!-- gemeinsames Script: Active-Link + Burger -->
+  <script>
+  (function(){
+    // Aktiven Link markieren
+    const current = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('a[href]').forEach(a=>{
+      if(a.getAttribute('href') === current) a.classList.add('active');
+    });
+
+    const toggleBtn = document.querySelector('.nav-toggle');
+    const panel     = document.getElementById('navPanel');
+    const overlay   = document.getElementById('overlay');
+    const draftBtn  = document.getElementById('draftToggle');
+    const mql       = window.matchMedia('(max-width: 900px)');
+
+    function openMenu(){
+      panel && panel.classList.add('open');
+      if (overlay) overlay.hidden = false;
+      toggleBtn && toggleBtn.setAttribute('aria-expanded','true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu(){
+      panel && panel.classList.remove('open');
+      if (overlay) overlay.hidden = true;
+      toggleBtn && toggleBtn.setAttribute('aria-expanded','false');
+      document.body.style.overflow = '';
+      const dd = panel ? panel.querySelector('.dropdown') : null;
+      dd && dd.classList.remove('open');
+      draftBtn && draftBtn.setAttribute('aria-expanded','false');
+    }
+
+    toggleBtn && toggleBtn.addEventListener('click', ()=>{
+      panel && panel.classList.contains('open') ? closeMenu() : openMenu();
+    });
+    overlay && overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
+
+    // Mobiles Draft-Submenu
+    draftBtn && draftBtn.addEventListener('click', ()=>{
+      const dd = draftBtn.closest('.dropdown');
+      const isOpen = dd.classList.toggle('open');
+      draftBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Link-Klick im Panel -> schließen (mobil)
+    panel && panel.querySelectorAll('a').forEach(a=>{
+      a.addEventListener('click', ()=>{ if (mql.matches) closeMenu(); });
+    });
+
+    // Bei Wechsel auf Desktop schließen
+    mql.addEventListener('change', e=>{ if(!e.matches) closeMenu(); });
+  })();
   </script>
 </body>
 </html>
