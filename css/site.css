@@ -100,10 +100,15 @@ body.site-v2 .dropdown:hover .submenu{ display:block; }
 
 /* ===== Burger & Mobile Panel ===== */
 body.site-v2 .nav-toggle{
-  margin-left:auto; display:none; width:44px; height:44px;
+  margin-left:auto; width:44px; height:44px;
   border-radius:10px; border:0; background:transparent; cursor:pointer;
+  display:none; /* Desktop: aus */
 }
-body.site-v2 .nav-toggle .bar{ width:22px; height:2px; background:#222; margin:4px 0; display:block; }
+body.site-v2 .nav-toggle .bar{
+  width:22px; height:2px; background:#222; display:block;
+  margin:0; border-radius:1px;
+}
+
 body.site-v2 .nav-toggle:focus-visible{ outline:2px solid #222; outline-offset:2px; }
 
 body.site-v2 .overlay[hidden]{ display:none; }
@@ -113,7 +118,10 @@ body.site-v2 .nav-panel{ display:none; }
 
 @media (max-width:900px){
   body.site-v2 .nav-desktop{ display:none; }
-  body.site-v2 .nav-toggle{ display:flex; align-items:center; justify-content:center; }
+  body.site-v2 .nav-toggle{
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:4px;   /* 3 Balken untereinander */
+  }
 
   body.site-v2 .nav-panel{
     position:fixed; left:0; right:0; top:var(--header-h-m); bottom:0;
@@ -215,4 +223,103 @@ body.site-v2 .site-footer .footer-link{
 }
 body.site-v2 .site-footer .footer-link:hover{
   border-bottom-color: #cbd5e1;
+}
+
+
+/* === Draft-Toolbar: Buttons angleichen & mobil sauber stapeln === */
+
+/* Optik angleichen: Toggle wie der große CTA, nur etwas kleiner */
+.draft-toolbar .btn-toggle{
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;           /* etwas kleiner als .btn-dark */
+  font-weight: 700;
+}
+.draft-toolbar .btn-toggle:hover{
+  background: var(--accent-hover);
+}
+
+/* Desktop: Abstand einheitlich */
+.draft-toolbar{
+  display: flex;
+  gap: 28px;                    /* Abstand zwischen Buttons */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* === Draft-Buttons: Mobile sauber stapeln & Abstand erzwingen === */
+@media (max-width:900px){
+  /* Wrapper: untereinander + Abstand */
+  .draft-toolbar{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+  }
+
+  /* Nur der große CTA vollbreit */
+  .draft-toolbar > *:not(.btn-toggle){ width:100%; }
+
+  /* Toggle schmal, linksbündig */
+  .btn-toggle{
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color:#fff; font-weight:700;
+    padding: 9px 12px;
+    border-radius:12px;
+    width: auto;
+    align-self: flex-start;
+    display: inline-flex;
+  }
+
+  /* Falls dein Toggle die ID nutzt – doppelt absichern */
+  #togglePosColors{
+    display: inline-flex;
+    width: auto !important;
+    align-self: flex-start;
+    margin-top: 22px !important;
+    float: none !important;
+    position: static !important;
+    padding: 9px 12px;
+  }
+
+  /* großer CTA optisch konsistent */
+  .btn-dark{
+    padding: 14px 16px;
+    border-radius: 14px;
+  }
+}
+
+
+/* Rankings: Header auf Mobil sauber umbrechen */
+@media (max-width: 900px){
+  .rankings-page .header-row{
+    flex-direction: column;           /* statt nebeneinander */
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rankings-page .header-right{
+    display: flex;
+    flex-direction: column;           /* Select + Update untereinander */
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .rankings-page .week-select{
+    align-self: flex-start;           /* links statt ganz rechts */
+    max-width: 200px;                 /* optional: nicht zu breit */
+    font-size: .95rem;
+    padding: 6px 12px;
+  }
+
+  .rankings-page .last-update{
+    white-space: normal;              /* darf umbrechen */
+    overflow-wrap: anywhere;          /* zur Not überall trennen */
+    text-align: left;
+    font-size: .9rem;
+  }
 }
