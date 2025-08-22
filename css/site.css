@@ -1,4 +1,4 @@
-/* === FantasyBlitz site.css (shared header/nav) === */
+/* === FantasyBlitz site.css (shared header/nav, v5) === */
 :root{
   --header-h: 92px;
   --header-h-m: 70px;
@@ -13,6 +13,7 @@
   --container: 1180px;
 }
 
+/* Base */
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body.site-v2{
@@ -23,10 +24,20 @@ body.site-v2{
 }
 @media (max-width: 900px){ body.site-v2{ padding-top: var(--header-h-m); } }
 body.site-v2 a{ color: inherit; text-decoration: none; }
-
 .container{ max-width: var(--container); margin:0 auto; padding:0 18px; }
 
-/* ===== Header (hell, fixiert) ===== */
+/* Reset alte globale header/nav Regeln, damit nichts kollidiert */
+body.site-v2 header::before,
+body.site-v2 header::after{display:none!important;content:none!important}
+body.site-v2 nav{
+  position: static!important;
+  left:auto!important; right:auto!important; top:auto!important;
+  transform:none!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* ===== Fixierter heller Header ===== */
 body.site-v2 .site-header{
   position:fixed; inset:0 0 auto 0;
   height:var(--header-h);
@@ -37,40 +48,48 @@ body.site-v2 .site-header{
 }
 @media (max-width:900px){ body.site-v2 .site-header{ height:var(--header-h-m); } }
 
-body.site-v2 .header-inner{ height:100%; display:flex; align-items:center; gap:16px; }
-body.site-v2 .brand{ display:flex; align-items:center; gap:10px; }
+body.site-v2 .header-inner{
+  height:100%; display:flex; align-items:center; gap:16px;
+  justify-content:flex-start;           /* Logo links */
+}
+body.site-v2 .brand{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
 body.site-v2 .brand img{ height:calc(100% - 20px); max-height:64px; width:auto; display:block; }
 @media (max-width:900px){ body.site-v2 .brand img{ max-height:52px; } }
 
-/* ===== Desktop-Nav ===== */
-body.site-v2 .nav-desktop{ margin-left:auto; }
-body.site-v2 .nav-list{ list-style:none; margin:0; padding:0; display:flex; align-items:center; gap:22px; }
+/* ===== Desktop-Navigation (rechts neben Logo) ===== */
+body.site-v2 .nav-desktop{ margin-left:16px; display:flex; align-items:center; }
+@media (min-width:901px){ body.site-v2 .nav-desktop{ margin-left:16px!important; } }
+
+body.site-v2 .nav-list{
+  list-style:none; margin:0; padding:0;
+  display:flex; align-items:center; gap:22px;
+}
 body.site-v2 .nav-list>li>a,
 body.site-v2 .nav-list>li>button.nav-link{
   display:inline-flex; align-items:center; gap:6px;
   padding:10px 14px; border-radius:10px;
   font-weight:700; color:var(--text);
   background:transparent; border:1px solid transparent;
-  font: inherit;
+  font: inherit; /* gleiche Schrift auch für Button „Draft“ */
 }
 body.site-v2 .nav-list>li>a:hover,
 body.site-v2 .nav-list>li>button.nav-link:hover{ background:#f2f2f3; }
 
-/* Dropdown (Desktop) */
+/* Dropdown (Desktop) – ohne Lücke */
 body.site-v2 .dropdown{ position:relative; }
 body.site-v2 .nav-link{ cursor:pointer; background:none; border:0; }
 body.site-v2 .nav-caret::after{ content:" ▾"; font-size:.85em; }
 body.site-v2 .submenu{
-  position:absolute; left:0; top:calc(100% + 8px);
+  position:absolute; left:0; top:100%;   /* direkt unter dem Menüpunkt */
   display:none; min-width:220px; padding:8px;
   background:#fff; border:1px solid var(--line); border-radius:12px;
-  box-shadow:var(--shadow); z-index:10;
+  box-shadow:var(--shadow); z-index:1002; /* über allem klickbar */
 }
 body.site-v2 .submenu a{ display:block; padding:10px 12px; border-radius:10px; }
 body.site-v2 .submenu a:hover{ background:#f3f4f6; }
 body.site-v2 .dropdown:hover .submenu{ display:block; }
 
-/* ===== Burger / Mobile ===== */
+/* ===== Burger & Mobile Panel ===== */
 body.site-v2 .nav-toggle{
   margin-left:auto; display:none; width:44px; height:44px;
   border-radius:10px; border:0; background:transparent; cursor:pointer;
@@ -81,7 +100,6 @@ body.site-v2 .nav-toggle:focus-visible{ outline:2px solid #222; outline-offset:2
 body.site-v2 .overlay[hidden]{ display:none; }
 body.site-v2 .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999; }
 
-/* Panel standardmäßig Desktop aus */
 body.site-v2 .nav-panel{ display:none; }
 
 @media (max-width:900px){
@@ -113,21 +131,16 @@ body.site-v2 .nav-panel{ display:none; }
   body.site-v2 .nav-panel .dropdown.open .nav-caret::after{ content:" ▴"; }
 }
 
-/* Utility */
-body.site-v2 .btn{
-  display:inline-block; padding:10px 14px; border-radius:12px;
-  background:var(--accent); color:#fff; font-weight:700; border:1px solid var(--accent);
+/* === Buttons (Lesbarkeit) === */
+body.site-v2 a.btn-dark,
+body.site-v2 .btn-dark{
+  display:inline-block;
+  color:#fff !important;
+  background: var(--accent) !important;
+  border:1px solid var(--accent) !important;
+  font-weight:700;
+  padding:12px 14px;
+  border-radius:12px;
 }
-body.site-v2 .btn:hover{ background:var(--accent-hover); }
-
-/* === overrides added (v4) to avoid legacy nav/header conflicts === */
-body.site-v2 header::before,
-body.site-v2 header::after{display:none!important;content:none!important}
-body.site-v2 .site-header nav,
-body.site-v2 nav.nav-desktop{position:static!important;left:auto!important;right:auto!important;top:auto!important;transform:none!important}
-body.site-v2 .header-inner{justify-content:flex-start}
-body.site-v2 .brand{margin-right:16px}
-/* place menu directly next to logo on desktop */
-@media (min-width:901px){
-  body.site-v2 .nav-desktop{margin-left:0!important}
-}
+body.site-v2 a.btn-dark:hover,
+body.site-v2 .btn-dark:hover{ background: var(--accent-hover) !important; }
