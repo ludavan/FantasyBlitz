@@ -13,7 +13,12 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="Startseite">
-        <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+  <picture>
+    <!-- Dark Mode -->
+    <source srcset="img/fantasyblitz-dm-logo.png" media="(prefers-color-scheme: dark)">
+    <!-- Light / Fallback -->
+    <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+  </picture>
       </a>
       <nav class="nav-desktop" aria-label="Hauptnavigation">
         <ul class="nav-list">
@@ -56,8 +61,13 @@
 
   <main class="page-content" style="margin-top: 8px;">
     <section class="hero" style="text-align: center; margin-bottom: 12px;">
-      <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Schriftzug"
-        style="max-width: 300px; height: auto; display: block; margin: 0 auto 6px;" />
+       <picture>
+    <!-- Dark Mode -->
+    <source srcset="img/fantasyblitz-dm-logo.png" media="(prefers-color-scheme: dark)">
+    <!-- Light / Fallback -->
+    <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Schriftzug"
+         style="max-width: 300px; height: auto; display: block; margin: 0 auto 6px;">
+  </picture>
       <p style="margin: 0 auto 50px; font-size: 1.25rem; font-weight: 500; line-height: 1.5; max-width: 700px; padding: 0 20px;">
         Der Fantasy Football Guide aus der deutschsprachigen Community – mit wöchentlichen Rankings, 
         Waiver-Tipps und interaktiven Tools, die dir helfen, deine Liga zu dominieren.

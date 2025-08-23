@@ -32,7 +32,12 @@
   <header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="index.html" aria-label="Startseite">
-      <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+          <picture>
+            <!-- Dark Mode -->
+            <source srcset="img/fantasyblitz-dm-logo.png" media="(prefers-color-scheme: dark)">
+            <!-- Light / Fallback -->
+            <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
+          </picture>
     </a>
     <nav class="nav-desktop" aria-label="Hauptnavigation">
       <ul class="nav-list">
