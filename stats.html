@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="css/site.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
+<script>
+  Chart.defaults.datasets.bar.categoryPercentage = 0.6; // Luft zwischen Kategorien
+  Chart.defaults.datasets.bar.barPercentage = 0.9;      // Balkenbreite innerhalb der Kategorie
+</script>
+
+
   <script>
     // Aktive Seite hervorheben
     const currentPage = window.location.pathname.split("/").pop();
@@ -223,36 +229,38 @@
       return rows;
     }
 
-    function makeOffChart(ctx, dataset) {
-      const labels = dataset.map(d => d.team);
-      const ppg = dataset.map(d => +d.ppg.toFixed(1));
+function makeOffChart(ctx, dataset) {
+  const labels = dataset.map(d => d.team);
+  const ppg = dataset.map(d => +d.ppg.toFixed(1));
 
-      return new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Punkte pro Spiel',
-            data: ppg,
-            barThickness: 10, maxBarThickness: 12, categoryPercentage: 0.9, barPercentage: 0.9
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: (ctx) => `${ctx.raw} Pkt/Spiel` } }
-          },
-          scales: {
-            x: { title: { display: true, text: 'Punkte pro Spiel' }, grid: { drawBorder: false } },
-            y: { grid: { display: false } }
-          },
-          animation: false
-        }
-      });
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Punkte pro Spiel',
+        data: ppg,
+        barThickness: 12,       // fixe Dicke hält das Layout stabil
+        maxBarThickness: 14
+        // categoryPercentage/barPercentage kommen jetzt aus den Defaults oben
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.raw} Pkt/Spiel` } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Punkte pro Spiel' }, grid: { drawBorder: false } },
+        y: { grid: { display: false }, offset: true } // <- wichtig für Abstand
+      },
+      animation: false
     }
+  });
+}
 
     /* -------------------- DEFENSE (Passing/Rushing-Yards pro Spiel) -------------------- */
     async function loadDefense() {
@@ -285,60 +293,59 @@
       return rows;
     }
 
-    function makeDefChart(ctx, dataset) {
-      const labels = dataset.map(d => d.team);
-      const pass = dataset.map(d => +d.passPerG.toFixed(1));
-      const rush = dataset.map(d => +d.rushPerG.toFixed(1));
+function makeDefChart(ctx, dataset) {
+  const labels = dataset.map(d => d.team);
+  const pass = dataset.map(d => +d.passPerG.toFixed(1));
+  const rush = dataset.map(d => +d.rushPerG.toFixed(1));
 
-      return new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Passing-Yards/Spiel (Defense)',
-              data: pass,
-              stack: 'yds',
-              backgroundColor: 'rgba(241, 196, 15, 0.85)',  
-              borderColor: 'rgba(241, 196, 15, 1)',
-              borderWidth: 1,
-              barThickness: 10, maxBarThickness: 12, categoryPercentage: 0.9, barPercentage: 0.9
-            },
-            {
-              label: 'Rushing-Yards/Spiel (Defense)',
-              data: rush,
-              stack: 'yds',
-              backgroundColor: 'rgba(230, 126, 34, 0.85)', 
-              borderColor: 'rgba(230, 126, 34, 1)',
-              borderWidth: 1,
-              barThickness: 10, maxBarThickness: 12, categoryPercentage: 0.9, barPercentage: 0.9
-            }
-          ]
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Passing-Yards/Spiel (Defense)',
+          data: pass,
+          stack: 'yds',
+          backgroundColor: 'rgba(241,196,15,0.85)',
+          borderColor: 'rgba(241,196,15,1)',
+          borderWidth: 1,
+          barThickness: 12,
+          maxBarThickness: 14
         },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top' },
-            tooltip: {
-              callbacks: {
-                footer: (items) => {
-                  const i = items[0].dataIndex;
-                  const tot = dataset[i].totalPerG.toFixed(1);
-                  return 'Total: ' + tot + ' Yards/Spiel';
-                }
-              }
-            }
-          },
-          scales: {
-            x: { title: { display: true, text: 'Yards pro Spiel (Defense)' }, grid: { drawBorder: false } },
-            y: { grid: { display: false } }
-          },
-          animation: false
+        {
+          label: 'Rushing-Yards/Spiel (Defense)',
+          data: rush,
+          stack: 'yds',
+          backgroundColor: 'rgba(230,126,34,0.85)',
+          borderColor: 'rgba(230,126,34,1)',
+          borderWidth: 1,
+          barThickness: 12,
+          maxBarThickness: 14
         }
-      });
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' },
+        tooltip: { callbacks: {
+          footer: (items) => {
+            const i = items[0].dataIndex;
+            return 'Total: ' + dataset[i].totalPerG.toFixed(1) + ' Yards/Spiel';
+          }
+        }}
+      },
+      scales: {
+        x: { title: { display: true, text: 'Yards pro Spiel (Defense)' }, grid: { drawBorder: false } },
+        y: { grid: { display: false }, offset: true } // <- Abstand zwischen Kategorien
+      },
+      animation: false
     }
+  });
+}
+
 
     function sortDef(rows, mode) {
       const s = [...rows];
