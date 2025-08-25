@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fantasyblitz.de/sitemap.xml
+Sitemap: https://www.fantasyblitz.de/sitemap.xml
