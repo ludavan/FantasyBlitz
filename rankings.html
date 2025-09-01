@@ -125,214 +125,266 @@
 
 
 <script>
-  const YEAR = "2025";
-  const MAX_WEEKS = 18;
-  const IS_PROD = /\.?fantasyblitz\.de$/i.test(location.hostname); // Prod-Erkennung
+/* ========== Globale Konstanten ========== */
+const YEAR = "2025";
+const MAX_WEEKS = 18;
+const IS_PROD = /\.?fantasyblitz\.de$/i.test(location.hostname); // Prod erkenntnis
 
-  // Cache für LM pro Woche
-  const WEEK_LASTMOD = new Map();
+/* ========== DOM Refs ========== */
+const weekSelector = document.getElementById('weekSelector');
+const container    = document.getElementById('rankingsContainer');
+const updateEl     = document.getElementById('updateInfo');
 
-  // Deine bestehenden refs
-  let rankings = { Flex: [], QB: [], DEF: [], Kicker: [] };
-  let activePosition = "QB";
-  const weekSelector = document.getElementById('weekSelector');
-  const container    = document.getElementById('rankingsContainer');
-  const updateEl     = document.getElementById('updateInfo');
+/* ========== State ========== */
+let rankings = { Flex: [], QB: [], DEF: [], Kicker: [] };
+let activePosition = "QB";
 
-  // --- Hilfsfunktionen für URL & Datum ---
-  function weekUrl(week) {
-    // In Prod KEIN Cachebuster, lokal schon
-    return `./data/${YEAR}/week-${week}.json` + (IS_PROD ? '' : `?v=${Date.now()}`);
+/* ========== Utils ========== */
+function weekUrl(week){
+  // In Prod ohne Cachebuster; lokal mit Cachebuster, damit Änderungen sofort sichtbar sind
+  return `./data/${YEAR}/week-${week}.json` + (IS_PROD ? '' : `?v=${Date.now()}`);
+}
+function parseTs(ts){
+  const d = ts ? new Date(ts) : null;
+  return d && !Number.isNaN(d.valueOf()) ? d : null;
+}
+function fmtCH(d){
+  return new Intl.DateTimeFormat('de-CH', {
+    weekday:'long', day:'2-digit', month:'2-digit', year:'numeric',
+    hour:'2-digit', minute:'2-digit', timeZone:'Europe/Zurich', hour12:false
+  }).format(d);
+}
+function setUpdateLabel(dt){
+  if (!updateEl) return;
+  if (dt){
+    updateEl.textContent = 'Letztes Update am: ' + fmtCH(dt);
+    updateEl.style.visibility = 'visible';
+  } else {
+    updateEl.textContent = '';
+    updateEl.style.visibility = 'hidden';
+  }
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function ensureRanks(list){ return list.map((p,i)=>({ ...p, rank:(p.rank ?? (i+1)) })); }
+function basePos(pos){ const m=String(pos||'').toUpperCase().match(/[A-Z]+/); return m?m[0]:''; }
+function normalizePosClass(raw){
+  const b=basePos(raw);
+  if(!b) return '';
+  if(b==='K' || String(raw||'').toUpperCase()==='KICKER') return 'Kicker';
+  return b; // QB, RB, WR, TE, DEF
+}
+
+/* ========== UI: Filter/Buttons/Render ========== */
+const LIMITS = { FLEX: 100, WR: 50, RB: 50, TE: 30 };
+
+function filterRankings(position){
+  activePosition = position;
+  render();
+  setActiveButton(position);
+}
+function setActiveButton(position){
+  const buttons = document.querySelectorAll('#filterButtons button');
+  const target = String(position).toUpperCase();
+  buttons.forEach(btn=>{
+    const txt = btn.textContent.trim().toUpperCase();
+    if (txt === target) btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+}
+function render(){
+  container.innerHTML = '';
+
+  let list = [];
+  const tab = activePosition.toUpperCase();
+
+  if (tab === 'FLEX') {
+    const base = rankings.Flex.slice(0, LIMITS.FLEX ?? rankings.Flex.length);
+    list = base.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+  } else if (tab === 'QB') {
+    list = rankings.QB.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+  } else if (tab === 'DEF') {
+    list = rankings.DEF.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+  } else if (tab === 'KICKER' || tab === 'K') {
+    list = rankings.Kicker.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+  } else if (['RB','WR','TE'].includes(tab)) {
+    const base = rankings.Flex.filter(p => basePos(p.position) === tab);
+    const limited = base.slice(0, LIMITS[tab] ?? base.length);
+    list = limited.map((p, i) => ({ ...p, _displayRank: i + 1 }));
   }
 
-  function fmtCH(d) {
-    return new Intl.DateTimeFormat('de-CH', {
-      weekday:'long', day:'2-digit', month:'2-digit', year:'numeric',
-      hour:'2-digit', minute:'2-digit', timeZone:'Europe/Zurich', hour12:false
-    }).format(d);
-  }
+  list.forEach((player, idx) => {
+    const posClass = normalizePosClass(player.position);
+    const card = document.createElement('div');
+    card.className = `ranking-card player-entry ${posClass}`;
 
-  function parseDateSafe(v) {
-    if (!v) return null;
-    const d = new Date(v);
-    return Number.isNaN(d.valueOf()) ? null : d;
-  }
+    const displayRank = player._displayRank ?? player.rank ?? (idx + 1);
 
-  // „Plausibilität“: viele CDNs setzen LM ≈ jetzt → dann nicht anzeigen
-  function isPlausibleLM(lm, dateHeader) {
-    if (!lm) return false;
-    const now = dateHeader || new Date(); // CDN "Date" Header hat Priorität
-    const diffMin = Math.abs(now - lm) / 60000;
-    if (diffMin <= 5) return false;      // zu frisch → wahrscheinlich CDN-generiert
-    if (lm > (dateHeader || new Date())) return false; // Zukunft → unplausibel
-    return true;
-  }
+    card.innerHTML = `
+      <div class="ranking-number">${displayRank}</div>
+      <div class="ranking-info">
+        <div class="player-name">${escapeHtml(player.player || '')}</div>
+        <div class="meta">
+          <span class="position">${escapeHtml(player.position || '')}</span>
+          &nbsp;·&nbsp;<span class="team">${escapeHtml(player.team || '')}</span>
+          ${player.matchup ? `&nbsp;·&nbsp;<span class="matchup">${escapeHtml(player.matchup)}</span>` : ''}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
 
-  // Holt NUR Metadaten (HEAD) + danach JSON (GET)
-  async function fetchJSONWithLM(url) {
-    let lm = null, dateHdr = null;
-
+/* ========== Wochen finden & laden ========== */
+async function discoverAvailableWeeks(year, maxWeek=18){
+  const found = [];
+  for (let w=1; w<=maxWeek; w++){
     try {
-      const head = await fetch(url, { method: 'HEAD', cache: IS_PROD ? 'no-cache' : 'no-store' });
-      if (head.ok) {
-        lm = parseDateSafe(head.headers.get('Last-Modified'));
-        dateHdr = parseDateSafe(head.headers.get('Date'));
-      }
-    } catch (_) {}
+      const res = await fetch(weekUrl(w), { cache: IS_PROD ? 'no-cache' : 'no-store' });
+      if (res.ok) found.push(w);
+    } catch(_) {}
+  }
+  return found;
+}
 
+async function loadWeek(week){
+  const url = weekUrl(week);
+  container.innerHTML = '<div style="padding:8px;color:#666;">Lade Rankings …</div>';
+  setUpdateLabel(null);
+
+  try {
     const res = await fetch(url, { cache: IS_PROD ? 'no-cache' : 'no-store' });
     if (!res.ok) throw new Error(`Datei nicht gefunden: ${url}`);
-
-    // Falls HEAD geblockt ist, versuche LM/Date aus GET
-    if (!lm) lm = parseDateSafe(res.headers.get('Last-Modified'));
-    if (!dateHdr) dateHdr = parseDateSafe(res.headers.get('Date'));
-
     const data = await res.json();
-    return { data, lastModified: isPlausibleLM(lm, dateHdr) ? lm : null };
-  }
 
-  function updateLabel(week) {
-    if (!updateEl) return;
-    const dt = WEEK_LASTMOD.get(String(week)) || null;
-    if (dt) {
-      updateEl.textContent = 'Letztes Update am: ' + fmtCH(dt);
-      updateEl.style.visibility = 'visible';
+    // updatedAt aus JSON anzeigen
+    setUpdateLabel(parseTs(data.updatedAt));
+
+    // Datenformat unterstützen (Objekt bevorzugt; Array weiterhin möglich)
+    if (Array.isArray(data)) {
+      const arr = data.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+      rankings = {
+        Flex:   ensureRanks(arr.filter(p => ['RB','WR','TE'].includes((p.position||'').toUpperCase()))),
+        QB:     ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='QB')),
+        DEF:    ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='DEF')),
+        Kicker: ensureRanks(arr.filter(p => ['K','KICKER'].includes((p.position||'').toUpperCase())))
+      };
+    } else if (data && (data.Flex || data.QB || data.DEF || data.Kicker || data.K)) {
+      rankings = {
+        Flex:   ensureRanks(data.Flex   || []),
+        QB:     ensureRanks(data.QB     || []),
+        DEF:    ensureRanks(data.DEF    || []),
+        Kicker: ensureRanks(data.Kicker || data.K || [])
+      };
     } else {
-      updateEl.textContent = '';
-      updateEl.style.visibility = 'hidden';
+      throw new Error('Unbekanntes Datenformat: erwarte Array oder Objekt mit Flex/QB/DEF/Kicker.');
     }
+
+    render();
+    setActiveButton(activePosition);
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<div class="notice-week-missing">Rangliste für <strong>Woche ${week}</strong> ist noch nicht verfügbar 🙂</div>`;
+    setUpdateLabel(null);
   }
+}
 
-  // --- Wochen-Discovery (zeigt nichts an, nur Optionen befüllen) ---
-  async function discoverAvailableWeeks(year, maxWeek=18) {
-    const found = [];
-    for (let w = 1; w <= maxWeek; w++) {
-      try {
-        const res = await fetch(weekUrl(w), { cache: IS_PROD ? 'no-cache' : 'no-store' });
-        if (res.ok) found.push(w);
-      } catch (_) {}
-    }
-    return found;
-  }
-
-  // --- Deine bestehenden UI-Helfer bleiben unverändert ---
-  function ensureRanks(list){ return list.map((p,i)=>({ ...p, rank:(p.rank ?? (i+1)) })); }
-  function basePos(pos){ const m=String(pos||'').toUpperCase().match(/[A-Z]+/); return m?m[0]:''; }
-  function normalizePosClass(raw){ const b=basePos(raw); if(!b) return ''; if(b==='K'||String(raw||'').toUpperCase()==='KICKER') return 'Kicker'; return b; }
-  const LIMITS = { FLEX:100, WR:50, RB:50, TE:30 };
-
-  function render(){
-    container.innerHTML='';
-    let list=[]; const tab=activePosition.toUpperCase();
-    if (tab==='FLEX'){
-      const base=rankings.Flex.slice(0, LIMITS.FLEX ?? rankings.Flex.length);
-      list=base.map((p,i)=>({ ...p, _displayRank:i+1 }));
-    } else if (tab==='QB'){ list=rankings.QB.slice().sort((a,b)=>(a.rank??9999)-(b.rank??9999));
-    } else if (tab==='DEF'){ list=rankings.DEF.slice().sort((a,b)=>(a.rank??9999)-(b.rank??9999));
-    } else if (tab==='KICKER' || tab==='K'){ list=rankings.Kicker.slice().sort((a,b)=>(a.rank??9999)-(b.rank??9999));
-    } else if (['RB','WR','TE'].includes(tab)){
-      const base=rankings.Flex.filter(p=>basePos(p.position)===tab);
-      const limited=base.slice(0, LIMITS[tab] ?? base.length);
-      list=limited.map((p,i)=>({ ...p, _displayRank:i+1 }));
-    }
-    list.forEach((player,idx)=>{
-      const posClass=normalizePosClass(player.position);
-      const card=document.createElement('div');
-      card.className=`ranking-card player-entry ${posClass}`;
-      const displayRank=player._displayRank ?? player.rank ?? (idx+1);
-      card.innerHTML=`
-        <div class="ranking-number">${displayRank}</div>
-        <div class="ranking-info">
-          <div class="player-name">${escapeHtml(player.player || '')}</div>
-          <div class="meta">
-            <span class="position">${escapeHtml(player.position || '')}</span>
-            &nbsp;·&nbsp;<span class="team">${escapeHtml(player.team || '')}</span>
-            ${player.matchup ? `&nbsp;·&nbsp;<span class="matchup">${escapeHtml(player.matchup)}</span>` : ''}
-          </div>
-        </div>`;
-      container.appendChild(card);
-    });
-  }
-
-  function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-
-  // --- Init & Load ---
-  weekSelector.addEventListener('change', () => loadWeek(weekSelector.value));
-
-  async function initWeeksAndLoad() {
+async function initWeeksAndLoad(){
+  if (weekSelector){
     weekSelector.disabled = true;
     weekSelector.innerHTML = '<option>Lade verfügbare Wochen…</option>';
+  }
 
-    const weeks = await discoverAvailableWeeks(YEAR, MAX_WEEKS);
+  const weeks = await discoverAvailableWeeks(YEAR, MAX_WEEKS);
+
+  if (weekSelector){
     weekSelector.innerHTML = '';
-
     if (weeks.length === 0) {
-      weekSelector.appendChild(new Option('Woche 1', '1'));
+      weekSelector.appendChild(new Option('Woche 1','1'));
       container.innerHTML = `<div class="notice-week-missing">Es wurden noch keine Wochen-Dateien gefunden.</div>`;
       weekSelector.disabled = false;
-      updateLabel(null);
+      setUpdateLabel(null);
       return;
     }
-
     weeks.forEach(w => weekSelector.appendChild(new Option(`Woche ${w}`, String(w))));
     weekSelector.value = String(weeks[0]);
     weekSelector.disabled = false;
-
-    await loadWeek(weekSelector.value);
-    filterRankings(activePosition);
   }
 
-  async function loadWeek(week){
-    const url = weekUrl(week);
-    container.innerHTML = '<div style="padding:8px;color:#666;">Lade Rankings …</div>';
-    updateEl && (updateEl.textContent = ''); updateEl && (updateEl.style.visibility='hidden');
+  await loadWeek(weeks[0] || 1);
+  filterRankings(activePosition);
+}
 
-    try {
-      const { data, lastModified } = await fetchJSONWithLM(url);
+/* ========== Events ========== */
+// Jahr im Footer automatisch "2025" oder "2025–{aktuelles Jahr}"
+(function autoYear(){
+  const start=2025, y=new Date().getFullYear();
+  const el=document.getElementById('y');
+  if (el) el.textContent = y>start ? (start + '–' + y) : String(start);
+})();
 
-      // Last-Modified pro Woche nur setzen, wenn plausibel
-      WEEK_LASTMOD.set(String(week), lastModified || null);
-      updateLabel(week);
+// Nav Link highlight (Desktop)
+(function highlightNav() {
+  const currentPage = window.location.pathname.split("/").pop();
+  document.querySelectorAll("nav a").forEach(link => {
+    const linkPage = link.getAttribute("href");
+    if (linkPage === currentPage) link.classList.add("active");
+  });
+})();
 
-      // Datenformat wie gehabt unterstützen
-      if (Array.isArray(data)) {
-        const arr = data.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
-        rankings = {
-          Flex:   ensureRanks(arr.filter(p => ['RB','WR','TE'].includes((p.position||'').toUpperCase()))),
-          QB:     ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='QB')),
-          DEF:    ensureRanks(arr.filter(p => (p.position||'').toUpperCase()==='DEF')),
-          Kicker: ensureRanks(arr.filter(p => ['K','KICKER'].includes((p.position||'').toUpperCase())))
-        };
-      } else if (data && (data.Flex || data.QB || data.DEF || data.Kicker || data.K)) {
-        rankings = {
-          Flex:   ensureRanks(data.Flex   || []),
-          QB:     ensureRanks(data.QB     || []),
-          DEF:    ensureRanks(data.DEF    || []),
-          Kicker: ensureRanks(data.Kicker || data.K || [])
-        };
-      } else {
-        throw new Error('Unbekanntes Datenformat: erwarte Array oder Objekt mit Flex/QB/DEF/Kicker.');
-      }
+// Mobile Menü + Overlay + Dropdown (einmalig, aufgeräumt)
+(function mobileMenu(){
+  const toggleBtn = document.querySelector('.nav-toggle');
+  const panel     = document.getElementById('navPanel');
+  const overlay   = document.getElementById('overlay');
+  const draftBtn  = document.getElementById('draftToggle');
+  const mql       = window.matchMedia('(max-width: 900px)');
 
-      render();
-    } catch (err) {
-      console.error(err);
-      container.innerHTML = `<div class="notice-week-missing">Rangliste für <strong>Woche ${week}</strong> ist noch nicht verfügbar 🙂</div>`;
-      updateLabel(null);
-    }
+  function openMenu(){
+    panel && panel.classList.add('open');
+    if (overlay) overlay.hidden = false;
+    toggleBtn && toggleBtn.setAttribute('aria-expanded','true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu(){
+    panel && panel.classList.remove('open');
+    if (overlay) overlay.hidden = true;
+    toggleBtn && toggleBtn.setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+    const dd = panel ? panel.querySelector('.dropdown') : null;
+    dd && dd.classList.remove('open');
+    draftBtn && draftBtn.setAttribute('aria-expanded','false');
   }
 
-  // Nav-Highlight wie gehabt …
-  (function highlightNav() {
-    const currentPage = window.location.pathname.split("/").pop();
-    document.querySelectorAll("nav a").forEach(link => {
-      const linkPage = link.getAttribute("href");
-      if (linkPage === currentPage) link.classList.add("active");
-    });
-  })();
+  toggleBtn && toggleBtn.addEventListener('click', ()=>{
+    panel && panel.classList.contains('open') ? closeMenu() : openMenu();
+  });
+  overlay && overlay.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
 
-  window.addEventListener('load', initWeeksAndLoad);
+  draftBtn && draftBtn.addEventListener('click', ()=>{
+    const dd = draftBtn.closest('.dropdown');
+    const isOpen = dd.classList.toggle('open');
+    draftBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  // Links im Panel schließen Menü auf Mobile
+  panel && panel.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>{ if (mql.matches) closeMenu(); });
+  });
+
+  // Wenn viewport > 900px wechselt, Menü schließen
+  mql.addEventListener('change', e=>{ if (!e.matches) closeMenu(); });
+})();
+
+// Week selector change
+weekSelector && weekSelector.addEventListener('change', () => loadWeek(weekSelector.value));
+
+// Start
+window.addEventListener('load', initWeeksAndLoad);
 </script>
+
 
 
 

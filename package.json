@@ -1,0 +1,12 @@
+{
+  "name": "fantasyblitz",
+  "version": "1.0.0",
+  "description": "FantasyBlitz Website mit automatischem updatedAt in JSON Files",
+  "private": true,
+  "scripts": {
+    "inject-updated": "node scripts/inject-updatedAt.js 2025"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
