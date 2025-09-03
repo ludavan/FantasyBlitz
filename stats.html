@@ -19,7 +19,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
 <script>
-  Chart.defaults.datasets.bar.categoryPercentage = 0.6; // Luft zwischen Kategorien
+  Chart.defaults.datasets.bar.categoryPercentage = 0.5; // Luft zwischen Kategorien
   Chart.defaults.datasets.bar.barPercentage = 0.9;      // Balkenbreite innerhalb der Kategorie
 </script>
 
@@ -199,263 +199,281 @@
   })();
 </script>
 
-
-
-  <script>
-    /* -------------------- Pfade zu CSVs -------------------- */
-    const OFF_CSV = 'data/2024/team_stats_off_2024.csv';
-    const DEF_CSV = 'data/2024/team_stats_def_2024.csv';
-
-    /* -------------------- OFFENSE (Punkte pro Spiel) -------------------- */
-    async function loadOffense() {
-      const text = await fetch(OFF_CSV).then(r => r.text());
-      const lines = text.split(/\r?\n/).filter(Boolean);
-      const headerIdx = lines.findIndex(l => l.startsWith('Rk,Tm,G,'));
-      if (headerIdx === -1) return [];
-
-      const dataLines = lines.slice(headerIdx + 1)
-        .filter(l => !l.startsWith(',Avg') && !l.startsWith(',League') && l.trim() !== '');
-
-      const rows = [];
-      for (const line of dataLines) {
-        const parts = line.split(',');
-        if (!/^\d+$/.test(parts[0])) continue; 
-        const team = parts[1];
-        const g = parseInt(parts[2], 10);
-        const pf = parseFloat(parts[3]); 
-        if (!team || !isFinite(g) || !isFinite(pf)) continue;
-        rows.push({ team, g, ppg: pf / g });
-      }
-      return rows;
-    }
-
-function makeOffChart(ctx, dataset) {
-  const labels = dataset.map(d => d.team);
-  const ppg = dataset.map(d => +d.ppg.toFixed(1));
-
-  return new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Punkte pro Spiel',
-        data: ppg,
-        barThickness: 12,       // fixe Dicke hält das Layout stabil
-        maxBarThickness: 14
-        // categoryPercentage/barPercentage kommen jetzt aus den Defaults oben
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: (ctx) => `${ctx.raw} Pkt/Spiel` } }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Punkte pro Spiel' }, grid: { drawBorder: false } },
-        y: { grid: { display: false }, offset: true } // <- wichtig für Abstand
-      },
-      animation: false
-    }
-  });
-}
-
-    /* -------------------- DEFENSE (Passing/Rushing-Yards pro Spiel) -------------------- */
-    async function loadDefense() {
-      const text = await fetch(DEF_CSV).then(r => r.text());
-      const lines = text.split(/\r?\n/).filter(Boolean);
-      const headerIdx = lines.findIndex(l => l.startsWith('Rk,Tm,G,'));
-      if (headerIdx === -1) return [];
-
-      const dataLines = lines.slice(headerIdx + 1)
-        .filter(l => !l.startsWith(',Avg') && !l.startsWith(',League') && l.trim() !== '');
-
-      const rows = [];
-      for (const line of dataLines) {
-        const parts = line.split(',');
-        if (!/^\d+$/.test(parts[0])) continue; 
-        const team = parts[1];
-        const g = parseInt(parts[2], 10);
-        // PFR Defense: Passing Yds = Index 12, Rushing Yds = Index 18 (Totals)
-        const passYdsTot = parseFloat(parts[12]);
-        const rushYdsTot = parseFloat(parts[18]);
-        if (!team || !isFinite(g) || !isFinite(passYdsTot) || !isFinite(rushYdsTot)) continue;
-
-        rows.push({
-          team, g,
-          passPerG: passYdsTot / g,
-          rushPerG: rushYdsTot / g,
-          totalPerG: (passYdsTot + rushYdsTot) / g
-        });
-      }
-      return rows;
-    }
-
-function makeDefChart(ctx, dataset) {
-  const labels = dataset.map(d => d.team);
-  const pass = dataset.map(d => +d.passPerG.toFixed(1));
-  const rush = dataset.map(d => +d.rushPerG.toFixed(1));
-
-  return new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Passing-Yards/Spiel (Defense)',
-          data: pass,
-          stack: 'yds',
-          backgroundColor: 'rgba(241,196,15,0.85)',
-          borderColor: 'rgba(241,196,15,1)',
-          borderWidth: 1,
-          barThickness: 12,
-          maxBarThickness: 14
-        },
-        {
-          label: 'Rushing-Yards/Spiel (Defense)',
-          data: rush,
-          stack: 'yds',
-          backgroundColor: 'rgba(230,126,34,0.85)',
-          borderColor: 'rgba(230,126,34,1)',
-          borderWidth: 1,
-          barThickness: 12,
-          maxBarThickness: 14
-        }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'top' },
-        tooltip: { callbacks: {
-          footer: (items) => {
-            const i = items[0].dataIndex;
-            return 'Total: ' + dataset[i].totalPerG.toFixed(1) + ' Yards/Spiel';
-          }
-        }}
-      },
-      scales: {
-        x: { title: { display: true, text: 'Yards pro Spiel (Defense)' }, grid: { drawBorder: false } },
-        y: { grid: { display: false }, offset: true } // <- Abstand zwischen Kategorien
-      },
-      animation: false
-    }
-  });
-}
-
-
-    function sortDef(rows, mode) {
-      const s = [...rows];
-      if (mode === 'pass') s.sort((a,b) => b.passPerG - a.passPerG);
-      else if (mode === 'rush') s.sort((a,b) => b.rushPerG - a.rushPerG);
-      else s.sort((a,b) => b.totalPerG - a.totalPerG);
-      return s;
-    }
-
-    /* -------------------- Init -------------------- */
-    (async function init() {
-      // Offense
-      const offRows = await loadOffense();
-      if (offRows.length) {
-        let offMode = 'ppg';
-        let currentOff = [...offRows].sort((a,b) => b.ppg - a.ppg);
-        const offCtx = document.getElementById('offPpgChart').getContext('2d');
-        const offChart = makeOffChart(offCtx, currentOff);
-        const offCard = document.getElementById('offense-ppg');
-        function setActiveOff(id) {
-          offCard.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-          document.getElementById(id).classList.add('active');
-        }
-        function updateOff() {
-          currentOff = (offMode === 'ppg')
-            ? [...offRows].sort((a,b) => b.ppg - a.ppg)
-            : [...offRows].sort((a,b) => a.team.localeCompare(b.team));
-          offChart.data.labels = currentOff.map(d => d.team);
-          offChart.data.datasets[0].data = currentOff.map(d => +d.ppg.toFixed(1));
-          offChart.update();
-        }
-        document.getElementById('sortPPG').addEventListener('click', () => { offMode = 'ppg'; setActiveOff('sortPPG'); updateOff(); });
-        document.getElementById('sortAlpha').addEventListener('click', () => { offMode = 'alpha'; setActiveOff('sortAlpha'); updateOff(); });
-      }
-
-      // Defense
-      const defRows = await loadDefense();
-      if (defRows.length) {
-        let defMode = 'total';
-        let currentDef = sortDef(defRows, defMode);
-        const defCtx = document.getElementById('defYdsChart').getContext('2d');
-        const defChart = makeDefChart(defCtx, currentDef);
-        const defCard = document.getElementById('defense-yds');
-        function setActiveDef(id) {
-          defCard.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-          document.getElementById(id).classList.add('active');
-        }
-        function updateDef() {
-          currentDef = sortDef(defRows, defMode);
-          defChart.data.labels = currentDef.map(d => d.team);
-          defChart.data.datasets[0].data = currentDef.map(d => +d.passPerG.toFixed(1));
-          defChart.data.datasets[1].data = currentDef.map(d => +d.rushPerG.toFixed(1));
-          defChart.update();
-        }
-        document.getElementById('sortTotal').addEventListener('click', () => { defMode = 'total'; setActiveDef('sortTotal'); updateDef(); });
-        document.getElementById('sortPass').addEventListener('click', () => { defMode = 'pass'; setActiveDef('sortPass'); updateDef(); });
-        document.getElementById('sortRush').addEventListener('click', () => { defMode = 'rush'; setActiveDef('sortRush'); updateDef(); });
-      }
-    })();
-  </script>
 <script>
-// Aktiven Link markieren (ohne Unterstreichung)
-(function(){
-  const current = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('a[href]').forEach(a=>{
-    if(a.getAttribute('href') === current) a.classList.add('active');
-  });
-})();
+  /* -------------------- Pfade zu CSVs -------------------- */
+  const OFF_CSV = 'data/2024/team_stats_off_2024.csv';
+  const DEF_CSV = 'data/2024/team_stats_def_2024.csv';
 
-// Mobile Menü
-(function(){
-  const toggleBtn = document.querySelector('.nav-toggle');
-  const panel = document.getElementById('navPanel');
-  const overlay = document.getElementById('overlay');
-  const draftToggleMobile = document.getElementById('draftToggle');
-  const mql = window.matchMedia('(max-width: 900px)');
+  /* -------------------- Helper: Normalisieren & Dedupe -------------------- */
+  function normalizeTeamName(s) {
+    // NBSP -> Space, Mehrfach-Spaces zu einem, trim
+    let t = String(s || '').replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
 
-  function openMenu(){
-    if(panel){ panel.classList.add('open'); }
-    if(overlay){ overlay.hidden = false; }
-    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','true'); }
-    document.body.style.overflow='hidden';
-  }
-  function closeMenu(){
-    if(panel){ panel.classList.remove('open'); }
-    if(overlay){ overlay.hidden = true; }
-    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','false'); }
-    document.body.style.overflow='';
-    const dd = panel ? panel.querySelector('.dropdown') : null;
-    if(dd){ dd.classList.remove('open'); }
-    if(draftToggleMobile){ draftToggleMobile.setAttribute('aria-expanded','false'); }
+    // bekannte Korrekturen (Liste erweiterbar)
+    const fixes = {
+      'Atalanta Falcons': 'Atlanta Falcons',
+      'New  Orleans Saints': 'New Orleans Saints'
+    };
+    return fixes[t] || t;
   }
 
-  if(toggleBtn) toggleBtn.addEventListener('click', ()=>{
-    panel && panel.classList.contains('open') ? closeMenu() : openMenu();
-  });
-  if(overlay) overlay.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+  function dedupeByTeam(rows, picker = (a, b) => a) {
+    const map = new Map();
+    for (const r of rows) {
+      const key = normalizeTeamName(r.team);
+      if (!map.has(key)) {
+        map.set(key, { ...r, team: key });
+      } else {
+        const keep = picker(map.get(key), r);
+        map.set(key, { ...keep, team: key });
+      }
+    }
+    return Array.from(map.values());
+  }
 
-  if(draftToggleMobile){
-    draftToggleMobile.addEventListener('click', ()=>{
-      const dd = draftToggleMobile.closest('.dropdown');
-      const isOpen = dd.classList.toggle('open');
-      draftToggleMobile.setAttribute('aria-expanded', String(isOpen));
+  function logDuplicates(rows) {
+    const seen = new Set(), dups = new Set();
+    for (const r of rows) {
+      const k = normalizeTeamName(r.team);
+      if (seen.has(k)) dups.add(k); else seen.add(k);
+    }
+    if (dups.size) console.warn('⚠️ Duplikate gefunden für Teams:', Array.from(dups));
+  }
+
+  // Chart-Optik: keine Bar-Ränder (verhindert "Streifen"-Effekt)
+  if (window.Chart) {
+    Chart.defaults.elements.bar.borderWidth = 0;
+  }
+
+  /* -------------------- OFFENSE (Punkte pro Spiel) -------------------- */
+  async function loadOffense() {
+    const text = await fetch(OFF_CSV).then(r => r.text());
+    const lines = text.split(/\r?\n/).filter(Boolean);
+
+    // Header finden
+    const headerIdx = lines.findIndex(l => l.startsWith('Rk,Tm,G,'));
+    if (headerIdx === -1) return [];
+
+    // Relevante Datenzeilen (Summary-Zeilen raus)
+    const dataLines = lines.slice(headerIdx + 1)
+      .filter(l => !l.startsWith(',Avg') && !l.startsWith(',League') && l.trim() !== '');
+
+    const rows = [];
+    for (const line of dataLines) {
+      const parts = line.split(',');
+      if (!/^\d+$/.test(parts[0])) continue; // nur echte Team-Zeilen
+
+      const team = normalizeTeamName(parts[1]);
+      const g  = parseInt(parts[2], 10);
+      const pf = parseFloat(parts[3]); // Total Points
+
+      if (!team || !Number.isFinite(g) || !Number.isFinite(pf) || g <= 0) continue;
+
+      rows.push({ team, g, ppg: pf / g });
+    }
+
+    logDuplicates(rows);
+    // Bei Duplikaten: den Datensatz mit mehr Spielen behalten
+    const deduped = dedupeByTeam(rows, (a, b) => (b.g > a.g ? b : a));
+    return deduped;
+  }
+
+  function makeOffChart(ctx, dataset) {
+    const labels = dataset.map(d => d.team);
+    const ppg = dataset.map(d => +d.ppg.toFixed(1));
+
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Punkte pro Spiel',
+          data: ppg,
+          barThickness: 12,
+          maxBarThickness: 14
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.raw} Pkt/Spiel` } }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Punkte pro Spiel' }, grid: { drawBorder: false } },
+          y: { grid: { display: false }, offset: true }
+        },
+        animation: false
+      }
     });
   }
 
-  mql.addEventListener('change', e => { if(!e.matches) closeMenu(); });
-})();
+  /* -------------------- DEFENSE (Passing/Rushing-Yards pro Spiel) -------------------- */
+  async function loadDefense() {
+    const text = await fetch(DEF_CSV).then(r => r.text());
+    const lines = text.split(/\r?\n/).filter(Boolean);
+
+    const headerIdx = lines.findIndex(l => l.startsWith('Rk,Tm,G,'));
+    if (headerIdx === -1) return [];
+
+    const dataLines = lines.slice(headerIdx + 1)
+      .filter(l => !l.startsWith(',Avg') && !l.startsWith(',League') && l.trim() !== '');
+
+    const rows = [];
+    for (const line of dataLines) {
+      const parts = line.split(',');
+      if (!/^\d+$/.test(parts[0])) continue;
+
+      const team = normalizeTeamName(parts[1]);
+      const g = parseInt(parts[2], 10);
+
+      // PFR Defense CSV: Totals → Passing@12, Rushing@18 (wie bei dir)
+      const passYdsTot = parseFloat(parts[12]);
+      const rushYdsTot = parseFloat(parts[18]);
+
+      if (!team || !Number.isFinite(g) || g <= 0 ||
+          !Number.isFinite(passYdsTot) || !Number.isFinite(rushYdsTot)) continue;
+
+      rows.push({
+        team, g,
+        passPerG: passYdsTot / g,
+        rushPerG: rushYdsTot / g,
+        totalPerG: (passYdsTot + rushYdsTot) / g
+      });
+    }
+
+    logDuplicates(rows);
+    const deduped = dedupeByTeam(rows, (a, b) => (b.g > a.g ? b : a));
+    return deduped;
+  }
+
+  function makeDefChart(ctx, dataset) {
+    const labels = dataset.map(d => d.team);
+    const pass = dataset.map(d => +d.passPerG.toFixed(1));
+    const rush = dataset.map(d => +d.rushPerG.toFixed(1));
+
+    return new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Passing-Yards/Spiel (Defense)',
+            data: pass,
+            stack: 'yds',
+            backgroundColor: 'rgba(241,196,15,0.85)',
+            borderColor: 'rgba(241,196,15,1)',
+            borderWidth: 0,
+            barThickness: 12,
+            maxBarThickness: 14
+          },
+          {
+            label: 'Rushing-Yards/Spiel (Defense)',
+            data: rush,
+            stack: 'yds',
+            backgroundColor: 'rgba(230,126,34,0.85)',
+            borderColor: 'rgba(230,126,34,1)',
+            borderWidth: 0,
+            barThickness: 12,
+            maxBarThickness: 14
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              footer: (items) => {
+                const i = items[0].dataIndex;
+                return 'Total: ' + dataset[i].totalPerG.toFixed(1) + ' Yards/Spiel';
+              }
+            }
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Yards pro Spiel (Defense)' }, grid: { drawBorder: false } },
+          y: { grid: { display: false }, offset: true }
+        },
+        animation: false
+      }
+    });
+  }
+
+  function sortDef(rows, mode) {
+    const s = [...rows];
+    if (mode === 'pass') s.sort((a,b) => b.passPerG - a.passPerG);
+    else if (mode === 'rush') s.sort((a,b) => b.rushPerG - a.rushPerG);
+    else s.sort((a,b) => b.totalPerG - a.totalPerG);
+    return s;
+  }
+
+  /* -------------------- Einmaliger Init -------------------- */
+  let offChart = null;
+  let defChart = null;
+
+  (async function init() {
+    // OFFENSE
+    const offRows = await loadOffense();
+    if (offRows.length) {
+      let offMode = 'ppg';
+      let currentOff = [...offRows].sort((a,b) => b.ppg - a.ppg);
+      const offCtx = document.getElementById('offPpgChart').getContext('2d');
+      offChart = makeOffChart(offCtx, currentOff);
+
+      const offCard = document.getElementById('offense-ppg');
+      function setActiveOff(id) {
+        offCard.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+      }
+      function updateOff() {
+        currentOff = (offMode === 'ppg')
+          ? [...offRows].sort((a,b) => b.ppg - a.ppg)
+          : [...offRows].sort((a,b) => a.team.localeCompare(b.team));
+        offChart.data.labels = currentOff.map(d => d.team);
+        offChart.data.datasets[0].data = currentOff.map(d => +d.ppg.toFixed(1));
+        offChart.update();
+      }
+      document.getElementById('sortPPG').addEventListener('click', () => { offMode='ppg'; setActiveOff('sortPPG'); updateOff(); });
+      document.getElementById('sortAlpha').addEventListener('click', () => { offMode='alpha'; setActiveOff('sortAlpha'); updateOff(); });
+    } else {
+      console.warn('Keine Offense-Daten gefunden.');
+    }
+
+    // DEFENSE
+    const defRows = await loadDefense();
+    if (defRows.length) {
+      let defMode = 'total';
+      let currentDef = sortDef(defRows, defMode);
+      const defCtx = document.getElementById('defYdsChart').getContext('2d');
+      defChart = makeDefChart(defCtx, currentDef);
+
+      const defCard = document.getElementById('defense-yds');
+      function setActiveDef(id) {
+        defCard.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+      }
+      function updateDef() {
+        currentDef = sortDef(defRows, defMode);
+        defChart.data.labels = currentDef.map(d => d.team);
+        defChart.data.datasets[0].data = currentDef.map(d => +d.passPerG.toFixed(1));
+        defChart.data.datasets[1].data = currentDef.map(d => +d.rushPerG.toFixed(1));
+        defChart.update();
+      }
+      document.getElementById('sortTotal').addEventListener('click', () => { defMode='total'; setActiveDef('sortTotal'); updateDef(); });
+      document.getElementById('sortPass').addEventListener('click', () => { defMode='pass'; setActiveDef('sortPass'); updateDef(); });
+      document.getElementById('sortRush').addEventListener('click', () => { defMode='rush'; setActiveDef('sortRush'); updateDef(); });
+    } else {
+      console.warn('Keine Defense-Daten gefunden.');
+    }
+  })();
 </script>
+
 
 <script>
 // Highlight current link
