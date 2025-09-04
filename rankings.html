@@ -177,7 +177,7 @@ function normalizePosClass(raw){
 }
 
 /* ========== UI: Filter/Buttons/Render ========== */
-const LIMITS = { FLEX: 150, WR: 70, RB: 60, TE: 25 };
+const LIMITS = { QB: 30, FLEX: 150, WR: 70, RB: 60, TE: 25 };
 
 function filterRankings(position){
   activePosition = position;
@@ -199,20 +199,29 @@ function render(){
   let list = [];
   const tab = activePosition.toUpperCase();
 
-  if (tab === 'FLEX') {
-    const base = rankings.Flex.slice(0, LIMITS.FLEX ?? rankings.Flex.length);
-    list = base.map((p, i) => ({ ...p, _displayRank: i + 1 }));
-  } else if (tab === 'QB') {
-    list = rankings.QB.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
-  } else if (tab === 'DEF') {
-    list = rankings.DEF.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
-  } else if (tab === 'KICKER' || tab === 'K') {
-    list = rankings.Kicker.slice().sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
-  } else if (['RB','WR','TE'].includes(tab)) {
-    const base = rankings.Flex.filter(p => basePos(p.position) === tab);
-    const limited = base.slice(0, LIMITS[tab] ?? base.length);
-    list = limited.map((p, i) => ({ ...p, _displayRank: i + 1 }));
-  }
+if (tab === 'FLEX') {
+  const base = rankings.Flex.slice(0, LIMITS.FLEX ?? rankings.Flex.length);
+  list = base.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+} else if (tab === 'QB') {
+  const base = rankings.QB
+    .slice()
+    .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999))
+    .slice(0, LIMITS.QB ?? rankings.QB.length);          // <- Limit greift hier
+  list = base.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+} else if (tab === 'DEF') {
+  list = rankings.DEF
+    .slice()
+    .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+} else if (tab === 'KICKER' || tab === 'K') {
+  list = rankings.Kicker
+    .slice()
+    .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+} else if (['RB', 'WR', 'TE'].includes(tab)) {
+  const base = rankings.Flex.filter(p => basePos(p.position) === tab);
+  const limited = base.slice(0, LIMITS[tab] ?? base.length);
+  list = limited.map((p, i) => ({ ...p, _displayRank: i + 1 }));
+}
+
 
   list.forEach((player, idx) => {
     const posClass = normalizePosClass(player.position);
