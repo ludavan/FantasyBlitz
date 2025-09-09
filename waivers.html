@@ -1,462 +1,296 @@
 <!DOCTYPE html>
 <html lang="de">
-
-
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Waivers – FantasyBlitz</title>
-  <!-- Favicons -->
+
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
   <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
   <link rel="apple-touch-icon" href="/favicon-apple-touch.png">
-  <!-- CSS -->
+
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/site.css" />
+
   <style>
-    /* Titelbalken */
-    .waiver-section {
-      color: #fff;
-      padding: 16px 20px;
-      margin: 30px 0 20px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 1.2rem;
-      text-align: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    :root{
+      --card-bg:#fff;
+      --card-br:#e5e7eb;
+      --panel:#f3f4f6;
+      --ink:#111827;
+      --muted:#6b7280;
+      --shadow:0 1px 3px rgba(0,0,0,.06);
     }
 
-    /* Karten-Container */
-    .streamer-box, .waiver-list {
-      background: #f1f1f1;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-    }
-    .streamer-box h4 { margin: 0 0 8px 0; }
-
-    /* Reihen mit Boxen nebeneinander */
-    .rank-boxes {
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-      margin-top: 6px;
+    .waiver-section{
+      color:#fff; background:#2f3136;
+      padding:14px 16px; margin:28px 0 16px; border-radius:12px;
+      font-weight:800; font-size:1.15rem; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.12);
     }
 
-    /* Einzelne Platzhalter-Box */
-    .rank-card {
-      flex: 1;
-      min-height: 86px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,.06);
-      border: 2px solid #e5e7eb; /* wird je nach Pos überschrieben */
-      overflow: hidden;
+    .waiver-list, .streamer-box{
+      background:var(--panel);
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:16px; margin-bottom:20px;
+    }
+
+    .five-wide, .rank-boxes{
+      display:flex; gap:14px; justify-content:space-between; align-items:stretch;
+    }
+
+    .rank-card{
+      flex:1; min-width:0;
+      background:var(--card-bg);
+      border:2px solid var(--card-br);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      position:relative;
+      padding:12px 10px 10px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center;
     }
 
     .rank-num{
-      position:absolute;
-      top:6px; left:8px;
-      font-weight:700;
-      font-variant-numeric:tabular-nums;
-      font-size:0.8rem;
-      padding:1px 6px;
-      border-radius:6px;
-      background:#fff;
-      border:1px solid #000;
-      color:#111;
+      position:absolute; top:6px; left:6px;
+      font-size:.72rem; font-weight:600;
+      background:#fff; color:#111; border:1px solid #000; border-radius:6px;
+      padding:0 6px; line-height:20px; height:20px; min-width:20px;
+      display:inline-flex; align-items:center; justify-content:center;
     }
 
-
-    /* Inhalt (wird später per JS befüllt). Jetzt leer. */
-    .rank-content {
-      font-weight: 700;
-      color: #111;
-      max-width: 100%;
-      padding: 6px 10px;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .rank-sub {
-      display:block;
-      margin-top: 2px;
-      font-weight: 600;
-      color:#6b7280;
-      font-size: .9rem;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    .rank-content{
+      margin-top:8px;
+      font-weight:800; color:var(--ink);
+      font-size:1rem; line-height:1.3;
+      max-width:100%;
+      white-space:normal; overflow-wrap:anywhere; text-overflow:clip;
     }
 
-    /* Top-Waiver Liste*/
-    .five-wide { display:flex; gap:16px; justify-content:space-between; margin-top:6px; }
-    .five-wide .rank-card { min-height: 72px; }
+    .rank-sub{
+      margin-top:2px;
+      font-weight:600; color:var(--muted);
+      font-size:.85rem; line-height:1.2;
+      max-width:100%;
+      white-space:normal; overflow-wrap:anywhere; text-overflow:clip;
+    }
 
-    /* Responsive: stapeln */
+    .card-all{    border-color:#c7d2fe; }
+    .card-QB{     border-color:#fde68a; }
+    .card-DEF{    border-color:#bbf7d0; }
+    .card-Kicker{ border-color:#fecaca; }
+
+    .header-row{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin:8px 0 8px;
+    }
+    .header-row h2{ margin:0; }
+
+    .week-select{
+      display:inline-block; padding:8px 10px; border:1px solid #d1d5db; border-radius:10px; background:#fff;
+      font-weight:600;
+    }
+
+    .intro-text{
+      margin: 6px 0 18px;
+      color:#374151;
+    }
+
+    @media (max-width: 900px){
+      .five-wide, .rank-boxes{ gap:10px; }
+      .rank-content{ font-size:.95rem; }
+      .rank-sub{ font-size:.8rem; }
+    }
     @media (max-width: 700px){
-      .rank-boxes, .five-wide { flex-direction: column; }
-      .rank-card { min-height: 72px; }
+      .five-wide, .rank-boxes{ flex-direction:column; }
+      .rank-card{ padding:12px; }
+      .rank-content{ font-size:1rem; }
     }
   </style>
-
-<script>
-  (function () {
-    // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
-    var PROD_HOSTS = []; 
-    if (!PROD_HOSTS.includes(location.hostname)) return; // lokal/preview -> kein Tracking
-
-    var s = document.createElement('script');
-    s.defer = true;
-    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-    s.setAttribute('data-cf-beacon', '{"token":"DEIN_TOKEN"}'); // 👉 später ersetzen
-    document.head.appendChild(s);
-  })();
-</script>
 </head>
 
 <body class="site-v2 site-v2">
   <header class="site-header">
-  <div class="container header-inner">
-    <a class="brand" href="index.html" aria-label="Startseite">
-          <picture>
-            <img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" />
-          </picture>
-    </a>
-    <nav class="nav-desktop" aria-label="Hauptnavigation">
-      <ul class="nav-list">
-        <li><a href="index.html">Startseite</a></li>
-        <li><a href="rankings.html">Weekly Rankings</a></li>
-        <li><a href="waivers.html">Waivers</a></li>
-        <li class="dropdown">
-          <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
-          <div class="submenu" role="menu">
-            <a href="draft-2025.html">Draft Cheat Sheet</a>
-            <a href="draft-guide.html">Draft Guide</a>
-          </div>
-        </li>
-        <li><a href="stats.html">Stats</a></li>
-        <li><a href="info.html">Info</a></li>
-      </ul>
-    </nav>
-    <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
-      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-    </button>
-  </div>
-</header>
-
-<nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
-  <a href="index.html">Startseite</a>
-  <a href="rankings.html">Weekly Rankings</a>
-  <a href="waivers.html">Waivers</a>
-  <div class="dropdown">
-    <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
-    <div class="submenu">
-      <a href="draft-2025.html">Draft Cheat Sheet</a>
-      <a href="draft-guide.html">Draft Guide</a>
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Startseite">
+        <picture><img src="img/fantasyblitz-logo.png" alt="FantasyBlitz Logo" /></picture>
+      </a>
+      <nav class="nav-desktop" aria-label="Hauptnavigation">
+        <ul class="nav-list">
+          <li><a href="index.html">Startseite</a></li>
+          <li><a href="rankings.html">Weekly Rankings</a></li>
+          <li><a href="waivers.html" class="active">Waivers</a></li>
+          <li class="dropdown">
+            <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
+            <div class="submenu" role="menu">
+              <a href="draft-2025.html">Draft Cheat Sheet</a>
+              <a href="draft-guide.html">Draft Guide</a>
+            </div>
+          </li>
+          <li><a href="stats.html">Stats</a></li>
+          <li><a href="info.html">Info</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
     </div>
-  </div>
-  <a href="stats.html">Stats</a>
-  <a href="info.html">Info</a>
-</nav>
-<div class="overlay" id="overlay" hidden></div>
+  </header>
 
-<main class="rankings-page">
-<div class="header-row">
-  <h2>Top Waiver Picks 2025</h2>
-  <div class="header-right">
-    <select id="weekSelector" class="position-button week-select">
-      <option>Woche auswählen…</option>
-    </select>
-  </div>
-</div>
+  <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
+    <a href="index.html">Startseite</a>
+    <a href="rankings.html">Weekly Rankings</a>
+    <a href="waivers.html" class="active">Waivers</a>
+    <div class="dropdown">
+      <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
+      <div class="submenu">
+        <a href="draft-2025.html">Draft Cheat Sheet</a>
+        <a href="draft-guide.html">Draft Guide</a>
+      </div>
+    </div>
+    <a href="stats.html">Stats</a>
+    <a href="info.html">Info</a>
+  </nav>
+  <div class="overlay" id="overlay" hidden></div>
 
+  <main class="rankings-page">
+    <div class="header-row">
+      <h2 id="pageTitle">Top Waiver Picks – Woche</h2>
+      <div class="header-right">
+        <select id="weekSelector" class="week-select" aria-label="Woche auswählen">
+          <option>Woche auswählen…</option>
+        </select>
+      </div>
+    </div>
 
- <p class="intro-text">
-Die Waiver-Tipps stehen nach Abschluss der ersten Spielwoche zur Verfügung und werden jeweils am Dienstag veröffentlicht. 
-Neben den allgemeinen Waiver-Picks findest du hier auch Streamer-Empfehlungen für Quarterbacks, Tight Ends, Defenses und Kicker. 
-Streamer sind kurzfristige Optionen für eine einzelne Woche – ideal, wenn du Lücken im Kader füllen oder Matchups gezielt ausnutzen möchtest.
-</p>
+    <!-- Erklärungstext (alter Text, auf TE angepasst) -->
+    <p class="intro-text">
+      Die Waiver-Tipps stehen nach Abschluss der ersten Spielwoche zur Verfügung und werden jeweils am Dienstag veröffentlicht.
+      Neben den allgemeinen Waiver-Picks findest du hier auch Streamer-Empfehlungen für Quarterbacks, Defenses und Kicker.
+      Streamer sind kurzfristige Optionen für eine einzelne Woche – ideal, wenn du Lücken im Kader füllen oder Matchups gezielt ausnutzen möchtest.
+    </p>
 
-
-
-    <!-- Top Waiver Picks – Alle Spieler -->
     <div class="waiver-section all">Top Waiver Picks – Alle Spieler</div>
     <div class="waiver-list">
       <div class="five-wide" id="topFive">
-        <div class="rank-card card-all">
-          <span class="rank-num">1</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-all">
-          <span class="rank-num">2</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-all">
-          <span class="rank-num">3</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-all">
-          <span class="rank-num">4</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-all">
-          <span class="rank-num">5</span>
-          <div class="rank-content"></div>
-        </div>
+        <div class="rank-card card-all"><span class="rank-num">1</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-all"><span class="rank-num">2</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-all"><span class="rank-num">3</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-all"><span class="rank-num">4</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-all"><span class="rank-num">5</span><div class="rank-content"></div><span class="rank-sub"></span></div>
       </div>
     </div>
 
-    <!-- Streamer: QB -->
     <div class="waiver-section QB">Top 3 Streamer Picks – Quarterback</div>
     <div class="streamer-box">
       <div class="rank-boxes" id="qbCards">
-        <div class="rank-card card-QB">
-          <span class="rank-num">1</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-QB">
-          <span class="rank-num">2</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-QB">
-          <span class="rank-num">3</span>
-          <div class="rank-content"></div>
-        </div>
+        <div class="rank-card card-QB"><span class="rank-num">1</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-QB"><span class="rank-num">2</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-QB"><span class="rank-num">3</span><div class="rank-content"></div><span class="rank-sub"></span></div>
       </div>
     </div>
 
-    <!-- Streamer: TE -->
-    <div class="waiver-section TE">Top 3 Streamer Picks – Tight End</div>
-    <div class="streamer-box">
-      <div class="rank-boxes" id="teCards">
-        <div class="rank-card card-TE">
-          <span class="rank-num">1</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-TE">
-          <span class="rank-num">2</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-TE">
-          <span class="rank-num">3</span>
-          <div class="rank-content"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Streamer: Defense -->
     <div class="waiver-section DEF">Top 3 Streamer Picks – Defense</div>
     <div class="streamer-box">
       <div class="rank-boxes" id="defCards">
-        <div class="rank-card card-DEF">
-          <span class="rank-num">1</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-DEF">
-          <span class="rank-num">2</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-DEF">
-          <span class="rank-num">3</span>
-          <div class="rank-content"></div>
-        </div>
+        <div class="rank-card card-DEF"><span class="rank-num">1</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-DEF"><span class="rank-num">2</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-DEF"><span class="rank-num">3</span><div class="rank-content"></div><span class="rank-sub"></span></div>
       </div>
     </div>
-    
-    <!-- Streamer: Kicker -->
+
     <div class="waiver-section Kicker">Top 3 Streamer Picks – Kicker</div>
     <div class="streamer-box">
       <div class="rank-boxes" id="kCards">
-        <div class="rank-card card-Kicker">
-          <span class="rank-num">1</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-Kicker">
-          <span class="rank-num">2</span>
-          <div class="rank-content"></div>
-        </div>
-        <div class="rank-card card-Kicker">
-          <span class="rank-num">3</span>
-          <div class="rank-content"></div>
-        </div>
+        <div class="rank-card card-Kicker"><span class="rank-num">1</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-Kicker"><span class="rank-num">2</span><div class="rank-content"></div><span class="rank-sub"></span></div>
+        <div class="rank-card card-Kicker"><span class="rank-num">3</span><div class="rank-content"></div><span class="rank-sub"></span></div>
       </div>
     </div>
   </main>
 
-<footer class="site-footer" role="contentinfo">
-  <p>
-    © <span id="y">2025</span> FantasyBlitz ·
-    <a class="footer-link" href="impressum.html">Impressum</a> ·
-    <a class="footer-link" href="datenschutz.html">Datenschutz</a>
-  </p>
-</footer>
+  <footer class="site-footer" role="contentinfo">
+    <p>
+      © <span id="y">2025</span> FantasyBlitz ·
+      <a class="footer-link" href="impressum.html">Impressum</a> ·
+      <a class="footer-link" href="datenschutz.html">Datenschutz</a>
+    </p>
+  </footer>
 
-<script>
-  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
-  (function(){
-    var start=2025, y=new Date().getFullYear();
-    var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
-  })();
-</script>
-
-
-
-  <!-- späteres Füllen per JS – Platzhalter bleiben leer, wenn keine Daten -->
   <script>
-    // Beispiel-Funktionen zum späteren Befüllen:
-    // fillTopFive([{player:'Name', team:'ABC'}, ...]);
-    // fillCards('qbCards', [{player:'QB1', team:'BUF'}, ...]);
-
-    function fillTopFive(items){
-      const host = document.getElementById('topFive');
-      if (!host) return;
-      [...host.querySelectorAll('.rank-card')].forEach((card, i) => {
-        const c = card.querySelector('.rank-content');
-        if (!c) return;
-        const p = (items||[])[i];
-        c.textContent = p ? `${p.player}${p.team ? ' – '+String(p.team).toUpperCase() : ''}` : '';
-      });
-    }
-
-    function fillCards(hostId, items){
-      const host = document.getElementById(hostId);
-      if (!host) return;
-      [...host.querySelectorAll('.rank-card')].forEach((card, i) => {
-        const c = card.querySelector('.rank-content');
-        if (!c) return;
-        const p = (items||[])[i];
-        c.textContent = p ? `${p.player}${p.team ? ' – '+String(p.team).toUpperCase() : ''}` : '';
-      });
-    }
+    (function(){
+      var start=2025, y=new Date().getFullYear();
+      var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
+    })();
   </script>
-<script>
-// Aktiven Link markieren (ohne Unterstreichung)
-(function(){
-  const current = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('a[href]').forEach(a=>{
-    if(a.getAttribute('href') === current) a.classList.add('active');
-  });
-})();
 
-// Mobile Menü
-(function(){
-  const toggleBtn = document.querySelector('.nav-toggle');
-  const panel = document.getElementById('navPanel');
-  const overlay = document.getElementById('overlay');
-  const draftToggleMobile = document.getElementById('draftToggle');
-  const mql = window.matchMedia('(max-width: 900px)');
+  <script>
+    const BASE_PATH = 'data/2025/waivers/';
+    const AVAILABLE_WEEKS = [1,2];
+    let activeWeek = 2;
 
-  function openMenu(){
-    if(panel){ panel.classList.add('open'); }
-    if(overlay){ overlay.hidden = false; }
-    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','true'); }
-    document.body.style.overflow='hidden';
-  }
-  function closeMenu(){
-    if(panel){ panel.classList.remove('open'); }
-    if(overlay){ overlay.hidden = true; }
-    if(toggleBtn){ toggleBtn.setAttribute('aria-expanded','false'); }
-    document.body.style.overflow='';
-    const dd = panel ? panel.querySelector('.dropdown') : null;
-    if(dd){ dd.classList.remove('open'); }
-    if(draftToggleMobile){ draftToggleMobile.setAttribute('aria-expanded','false'); }
-  }
+    async function loadWeek(week){
+      try{
+        const res = await fetch(`${BASE_PATH}waivers-week${week}.json`, { cache:'no-store' });
+        if(!res.ok) throw new Error('not found');
+        return await res.json();
+      }catch(e){ return null; }
+    }
 
-  if(toggleBtn) toggleBtn.addEventListener('click', ()=>{
-    panel && panel.classList.contains('open') ? closeMenu() : openMenu();
-  });
-  if(overlay) overlay.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+    function setCards(containerId, items, showPos=false){
+      const host = document.getElementById(containerId);
+      if (!host) return;
+      const cards = [...host.querySelectorAll('.rank-card')];
+      cards.forEach((card, i) => {
+        const nameEl = card.querySelector('.rank-content');
+        const subEl  = card.querySelector('.rank-sub');
+        const p = (items || [])[i];
+        if (!p){ nameEl.textContent=''; subEl.textContent=''; return; }
+        nameEl.textContent = p.player || '';
+        subEl.textContent  = showPos && p.position
+          ? `${(p.team||'').toUpperCase()}${p.team ? ' · ' : ''}${p.position}`
+          : (p.team ? p.team.toUpperCase() : '');
+      });
+    }
 
-  if(draftToggleMobile){
-    draftToggleMobile.addEventListener('click', ()=>{
-      const dd = draftToggleMobile.closest('.dropdown');
-      const isOpen = dd.classList.toggle('open');
-      draftToggleMobile.setAttribute('aria-expanded', String(isOpen));
-    });
-  }
+    function renderWeek(data){
+      // Karten setzen
+      if(!data){
+        setCards('topFive',[],true);
+        setCards('qbCards',[]);
+        setCards('defCards',[]);
+        setCards('kCards',[]);
+      } else {
+        setCards('topFive',(data.top||[]).slice(0,5),true);
+        setCards('qbCards',(data.streamers?.QB||[]).slice(0,3));
+        setCards('defCards',(data.streamers?.DEF||[]).slice(0,3));
+        setCards('kCards',(data.streamers?.K||[]).slice(0,3));
+      }
 
-  mql.addEventListener('change', e => { if(!e.matches) closeMenu(); });
-})();
-</script>
+      // Titel dynamisch anpassen
+      const titleEl = document.getElementById('pageTitle');
+      if(titleEl && data){ titleEl.textContent = `Top Waiver Picks & Streamers – Woche ${data.week}`; }
+      // Optional auch Browser-Tab-Titel anpassen:
+      if(data){ document.title = `Waivers – Woche ${data.week} | FantasyBlitz`; }
+    }
 
-<script>
-// Highlight current link
-(function(){
-  const current = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('a[href]').forEach(a=>{
-    if(a.getAttribute('href')===current) a.classList.add('active');
-  });
-})();
-// Mobile burger
-(function(){
-  const toggleBtn = document.querySelector('.nav-toggle');
-  const panel = document.getElementById('navPanel');
-  const overlay = document.getElementById('overlay');
-  const draftToggle = document.getElementById('draftToggle');
-  const mql = window.matchMedia('(max-width: 900px)');
-  function openM(){ panel?.classList.add('open'); if(overlay) overlay.hidden=false; toggleBtn?.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
-  function closeM(){ panel?.classList.remove('open'); if(overlay) overlay.hidden=true; toggleBtn?.setAttribute('aria-expanded','false'); document.body.style.overflow=''; const dd=panel?.querySelector('.dropdown'); dd&&dd.classList.remove('open'); draftToggle?.setAttribute('aria-expanded','false'); }
-  toggleBtn?.addEventListener('click',()=>{ panel?.classList.contains('open')?closeM():openM(); });
-  overlay?.addEventListener('click', closeM);
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeM(); });
-  draftToggle?.addEventListener('click', ()=>{ const dd=draftToggle.closest('.dropdown'); const isOpen=dd.classList.toggle('open'); draftToggle.setAttribute('aria-expanded', String(isOpen)); });
-  mql.addEventListener('change', e=>{ if(!e.matches) closeM(); });
-})();
-</script>
+    function populateWeekSelector(){
+      const sel = document.getElementById('weekSelector');
+      sel.innerHTML = '<option>Woche auswählen…</option>';
+      AVAILABLE_WEEKS.forEach(w => sel.append(new Option(`Woche ${w}`, w)));
+      sel.value = String(activeWeek);
+      sel.addEventListener('change', async ()=>{
+        const val = Number(sel.value);
+        if(!isNaN(val)){ activeWeek = val; renderWeek(await loadWeek(val)); }
+      });
+    }
 
-<!-- Unified Mobile Menu & Active Link (burger fix) -->
-<script>
-(function(){
-  // Active link
-  const current = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('a[href]').forEach(a=>{
-    if(a.getAttribute('href') === current) a.classList.add('active');
-  });
-
-  const toggleBtn = document.querySelector('.nav-toggle');
-  const panel     = document.getElementById('navPanel');
-  const overlay   = document.getElementById('overlay');
-  const draftBtn  = document.getElementById('draftToggle');
-  const mql       = window.matchMedia('(max-width: 900px)');
-
-  function openMenu(){
-    panel && panel.classList.add('open');
-    if (overlay) overlay.hidden = false;
-    toggleBtn && toggleBtn.setAttribute('aria-expanded','true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu(){
-    panel && panel.classList.remove('open');
-    if (overlay) overlay.hidden = true;
-    toggleBtn && toggleBtn.setAttribute('aria-expanded','false');
-    document.body.style.overflow = '';
-    const dd = panel ? panel.querySelector('.dropdown') : null;
-    dd && dd.classList.remove('open');
-    draftBtn && draftBtn.setAttribute('aria-expanded','false');
-  }
-
-  toggleBtn && toggleBtn.addEventListener('click', ()=>{
-    panel && panel.classList.contains('open') ? closeMenu() : openMenu();
-  });
-  overlay && overlay.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
-
-  draftBtn && draftBtn.addEventListener('click', ()=>{
-    const dd = draftBtn.closest('.dropdown');
-    const isOpen = dd.classList.toggle('open');
-    draftBtn.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  panel && panel.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click', ()=>{ if (mql.matches) closeMenu(); });
-  });
-
-  mql.addEventListener('change', e=>{ if (!e.matches) closeMenu(); });
-})();
-</script>
+    (async function init(){
+      populateWeekSelector();
+      renderWeek(await loadWeek(activeWeek));
+    })();
+  </script>
 </body>
 </html>
