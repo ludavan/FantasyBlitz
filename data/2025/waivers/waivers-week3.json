@@ -1,0 +1,23 @@
+{
+  "week": 3,
+  "season": 2025,
+  "published": "2025-16-09",
+  "top": [
+    { "player": "Bhayshul Tuten", "team": "JAC", "position": "RB" },
+    { "player": "Juwan Johnson", "team": "NO", "position": "TE" },
+    { "player": "Harold Fannin Jr.", "team": "CLE", "position": "TE" },
+    { "player": "Elic Ayomanor", "team": "TEN", "position": "WR" },
+    { "player": "Daniel Jones", "team": "IND", "position": "QB" }
+  ],
+  "streamers": {
+    "QB": [
+  
+    ],
+    "DEF": [
+     
+    ],
+    "K": [
+     
+    ]
+  }
+}
