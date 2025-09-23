@@ -1,0 +1,23 @@
+{
+  "week": 4,
+  "season": 2025,
+  "published": "2025-23-09",
+  "top": [
+    { "player": "Trey Benson", "team": "ARI", "position": "RB" },
+    { "player": "Hunter Henry", "team": "NE", "position": "TE" },
+    { "player": "Blake Corum", "team": "LAR", "position": "RB" },
+    { "player": "Elic Ayomanor", "team": "TEN", "position": "WR" },
+    { "player": "Luther Burden", "team": "CHI", "position": "WR" }
+  ],
+  "streamers": {
+    "QB": [
+  
+    ],
+    "DEF": [
+     
+    ],
+    "K": [
+     
+    ]
+  }
+}
