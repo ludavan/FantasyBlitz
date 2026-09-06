@@ -2,11 +2,10 @@
 <html lang="de">
 
 
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Draft Board – FantasyBlitz</title>
+  <title>Draft Rankings 2026 – FantasyBlitz</title>
   <!-- Favicons -->
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
@@ -16,8 +15,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/site.css" />
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<script>
+  <script>
   (function () {
     // 👉 später echte Live-Domains hier eintragen, z.B.: ['fantasyblitz.ch','www.fantasyblitz.ch']
     var PROD_HOSTS = []; 
@@ -32,6 +30,7 @@
 </script>
 
 </head>
+
 <body class="site-v2 site-v2">
   <header class="site-header">
   <div class="container header-inner">
@@ -75,14 +74,19 @@
 <div class="overlay" id="overlay" hidden></div>
 
   <main class="draft-page">
-    <h2>Draft Board</h2>
-     <p class="intro-text">
-      Ziehe und sortiere die Spieler <b>ausschließlich in der Liste „Alle Positionen"</b>,
-      um deine gewünschte Draft-Reihenfolge festzulegen.
-      Änderungen dort aktualisieren automatisch die Positionslisten.
-    </p>
 
-    <a href="draft-2026.html" class="btn-dark">⇦ Zurück zum FantasyBlitz Draft Ranking 2026</a>
+    
+    <h2>FantasyBlitz Draft Ranking 2026</h2>
+ <p class="intro-text">
+  Das <b>FantasyBlitz Draft-Ranking 2026</b> umfasst alle relevanten Spieler – sowohl für <b>Alle Positionen</b> (ohne Defense und Kicker)  
+  als auch getrennt nach einzelnen Positionen (<b>QB, RB, WR, TE</b>).  
+  Für <b>Defense und Kicker</b> werden nur die Top&nbsp;8 angezeigt, da diese Positionen im Draft weniger Gewicht haben und während der Saison gut gestreamt werden können.  
+  Beim Draft kannst du die Listen interaktiv durchstreichen, um jederzeit den Überblick zu behalten.
+</p>
+
+
+    <a href="draft-board.html" class="btn-dark">⇨ Zum interaktiven Draft Board</a>
+
     <!-- Toolbar rechts -->
     <div class="draft-toolbar">
       <button id="togglePosColors" class="btn-toggle" type="button" aria-pressed="false">
@@ -110,12 +114,123 @@
 </script>
 
 
-
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      const container = document.getElementById('rankingsContainer');
+      // Aktive Navigation markieren
+      const currentPage = window.location.pathname.split("/").pop().toLowerCase();
+      document.querySelectorAll("nav a").forEach(link => {
+        const href = (link.getAttribute("href") || "").toLowerCase();
+        if (href === currentPage) link.classList.add("active");
+      });
+      // ==== 2026 Draft-Ranking (eine gemeinsame JSON-Datei) ====
+      const BASE_JSON_PATH = 'data/draft/2026/draft-rankings-2026.json';
 
-      // === Positionsfarben Toggle ===
+      let baseData = [], defData = [], kData = [];
+      try {
+        const res = await fetch(BASE_JSON_PATH, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Fehler beim Laden: ' + BASE_JSON_PATH);
+        const allData = await res.json();
+        baseData = allData.filter(p => !['DST','DEF','K','KICKER'].includes(String(p.position || '').toUpperCase()));
+        defData  = allData.filter(p => ['DST','DEF'].includes(String(p.position || '').toUpperCase()));
+        kData    = allData.filter(p => ['K','KICKER'].includes(String(p.position || '').toUpperCase()));
+      } catch (error) {
+        console.error('Fehler beim Laden der Rankings:', error);
+        document.getElementById('rankingsContainer').innerHTML =
+          '<div style="padding:10px;border:1px solid #444;border-radius:8px;">Konnte die Draft-Rankings nicht laden.</div>';
+      }
+
+      const container = document.getElementById('rankingsContainer');
+      container.innerHTML = '';
+
+      // 1) Normale Spalten: ALL + QB + RB + WR + TE
+      const positions = ['ALL', 'QB', 'RB', 'WR', 'TE'];
+
+      const titleFor = (pos) => (pos === 'ALL' ? 'Alle Positionen' : pos);
+      const playersFor = (pos) => (pos === 'ALL' ? baseData : baseData.filter(p => String(p.position).toUpperCase() === pos));
+
+      positions.forEach(pos => {
+        const col = document.createElement('div');
+        col.className = 'position-column';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = titleFor(pos);
+        col.appendChild(h3);
+
+        const players = playersFor(pos);
+        players.forEach((player, idx) => {
+          const div = document.createElement('div');
+          const posClass = String(player.position || '').trim();
+          div.classList.add('player-entry');
+          if (posClass) div.classList.add(posClass);
+          div.dataset.player = player.player;
+
+          const rankText = (idx + 1) + '.';
+          div.textContent = `${rankText} ${player.player} (${player.team}, ${player.position})`;
+
+          div.addEventListener('click', () => {
+            const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+            document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+          });
+
+          col.appendChild(div);
+        });
+
+        container.appendChild(col);
+      });
+
+      // 2) Kombi-Spalte: DEF (oben) + Kicker (unten)
+      const dkCol = document.createElement('div');
+      dkCol.className = 'position-column';
+
+      // DEF Block
+      const defH3 = document.createElement('h3');
+      defH3.textContent = 'DEF';
+      dkCol.appendChild(defH3);
+
+      defData.forEach((player, idx) => {
+        const div = document.createElement('div');
+        div.classList.add('player-entry', 'DEF'); 
+        div.dataset.player = player.player;
+        const rankText = (idx + 1) + '.';
+        div.textContent = `${rankText} ${player.player} (${player.team}, DEF)`;
+
+        div.addEventListener('click', () => {
+          const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+          document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+        });
+
+        dkCol.appendChild(div);
+      });
+
+      // Trennlinie
+      const sep = document.createElement('hr');
+      sep.className = 'divider';
+      dkCol.appendChild(sep);
+
+      // Kicker Block
+      const kH3 = document.createElement('h3');
+      kH3.className = 'subhead';
+      kH3.textContent = 'Kicker';
+      dkCol.appendChild(kH3);
+
+      kData.forEach((player, idx) => {
+        const div = document.createElement('div');
+        div.classList.add('player-entry', 'Kicker'); 
+        div.dataset.player = player.player;
+        const rankText = (idx + 1) + '.';
+        div.textContent = `${rankText} ${player.player} (${player.team}, K)`;
+
+        div.addEventListener('click', () => {
+          const safe = (window.CSS && CSS.escape) ? CSS.escape(player.player) : String(player.player).replace(/["\\]/g, "\\$&");
+          document.querySelectorAll('.player-entry[data-player="' + safe + '"]').forEach(el => el.classList.toggle('crossed'));
+        });
+
+        dkCol.appendChild(div);
+      });
+
+      container.appendChild(dkCol);
+
+      // === Positionsfarben: Toggle-Button ===
       const toggleBtn = document.getElementById('togglePosColors');
       function applyPosColorsState(off){
         document.body.classList.toggle('no-pos-colors', off);
@@ -128,196 +243,6 @@
       toggleBtn.addEventListener('click', () => {
         const willOff = !document.body.classList.contains('no-pos-colors');
         applyPosColorsState(willOff);
-      });
-
-      // === Daten laden ===
-      // ==== 2026 Draft-Ranking (eine gemeinsame JSON-Datei) ====
-      const BASE_JSON_PATH = 'data/draft/2026/draft-rankings-2026.json';
-      let draftData = [];
-      let defData = [];
-      let kickerData = [];
-
-      try {
-        const res = await fetch(BASE_JSON_PATH, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Fehler beim Laden der Basis-Daten');
-        const allData = await res.json();
-        draftData  = allData.filter(p => !['DST','DEF','K','KICKER'].includes(String(p.position || '').toUpperCase()));
-        defData    = allData.filter(p => ['DST','DEF'].includes(String(p.position || '').toUpperCase()));
-        kickerData = allData.filter(p => ['K','KICKER'].includes(String(p.position || '').toUpperCase()));
-      } catch (e) {
-        console.error('Fehler beim Laden:', e);
-      }
-
-      // Spalten anlegen (ALL + Skill-Pos)
-      const positions = ['ALL', 'QB', 'RB', 'WR', 'TE'];
-      const positionLists = {};
-
-      positions.forEach(pos => {
-        const column = document.createElement('div');
-        column.className = 'position-column';
-
-        const title = document.createElement('h3');
-        title.textContent = (pos === 'ALL') ? 'Alle Positionen' : pos;
-        column.appendChild(title);
-
-        const list = document.createElement('div');
-        list.id = 'list-' + pos;
-        list.className = 'player-list';
-        column.appendChild(list);
-
-        container.appendChild(column);
-        positionLists[pos] = list;
-      });
-
-      // DEF-Spalte anlegen
-      // Kombi-Spalte: DEF oben, Kicker darunter
-      const dkCol = document.createElement('div');
-      dkCol.className = 'position-column';
-
-      // DEF
-      {
-        const h3 = document.createElement('h3');
-        h3.textContent = 'DEF';
-        dkCol.appendChild(h3);
-
-        const list = document.createElement('div');
-        list.id = 'list-DEF';
-        list.className = 'player-list';
-        dkCol.appendChild(list);
-      }
-
-      // Trennlinie
-      const sep = document.createElement('hr');
-      sep.style.border = 'none';
-      sep.style.height = '1px';
-      sep.style.background = '#ddd';
-      sep.style.margin = '8px 0';
-      dkCol.appendChild(sep);
-
-      // Kicker
-      {
-        const h3 = document.createElement('h3');
-        h3.textContent = 'Kicker';
-        dkCol.appendChild(h3);
-
-        const list = document.createElement('div');
-        list.id = 'list-KICKER';
-        list.className = 'player-list';
-        dkCol.appendChild(list);
-      }
-
-      container.appendChild(dkCol);
-
-
-      // ===== Rendering =====
-      let currentData = draftData.slice();
-
-      function renderPlayers(data) {
-        // leeren
-        positionLists['ALL'].innerHTML = '';
-        ['QB', 'RB', 'WR', 'TE'].forEach(pos => positionLists[pos].innerHTML = '');
-        // DEF/KICKER nicht jedes Mal neu anlegen – nur Inhalt leeren:
-        const defList = document.getElementById('list-DEF');
-        const kList   = document.getElementById('list-KICKER');
-        if (defList) defList.innerHTML = '';
-        if (kList)   kList.innerHTML   = '';
-
-        // Helper: sicherer Selektor ohne Backticks
-        const safeSelForPlayer = (name) => {
-          const safe = (window.CSS && CSS.escape) ? CSS.escape(name) : String(name).replace(/["\\]/g, "\\$&");
-          return '.player-entry[data-player="' + safe + '"]';
-        };
-
-        // 1) "Alle Spieler" rendern und globale Rang-Map aufbauen
-        const globalRank = new Map();
-        data.forEach((player, index) => {
-          const rank = index + 1;
-          globalRank.set(player.player, rank);
-
-          const playerDiv = document.createElement('div');
-          playerDiv.className = 'player-entry ' + String(player.position).toUpperCase();
-          playerDiv.dataset.player = player.player;
-          playerDiv.dataset.position = player.position;
-          playerDiv.textContent = rank + '. ' + player.player + ' (' + player.team + ', ' + player.position + ')';
-
-          playerDiv.addEventListener('click', () => {
-            document.querySelectorAll(safeSelForPlayer(player.player))
-              .forEach(entry => entry.classList.toggle('crossed'));
-          });
-
-          positionLists['ALL'].appendChild(playerDiv);
-        });
-
-        // 2) Positionsspalten (QB/RB/WR/TE): gleiche Reihenfolge wie in ALL
-        ['QB', 'RB', 'WR', 'TE'].forEach(pos => {
-          const filtered = data.filter(p => String(p.position).toUpperCase() === pos);
-          filtered.forEach((player) => {
-            const overall = globalRank.get(player.player) || 0;
-            const div = document.createElement('div');
-            div.className = 'player-entry ' + String(player.position).toUpperCase();
-            div.dataset.player = player.player;
-            div.dataset.position = player.position;
-            div.textContent = overall + '. ' + player.player + ' (' + player.team + ', ' + player.position + ')';
-
-            div.addEventListener('click', () => {
-              document.querySelectorAll(safeSelForPlayer(player.player))
-                .forEach(entry => entry.classList.toggle('crossed'));
-            });
-
-            positionLists[pos].appendChild(div);
-          });
-        });
-
-        // 3) DEF (eigene JSON, eigener Rang)
-        if (defList && Array.isArray(defData)) {
-          defData.forEach((player, i) => {
-            const div = document.createElement('div');
-            div.className = 'player-entry DEF';
-            div.dataset.player = player.player;
-            const rankText = (i + 1) + '.';
-            div.textContent = rankText + ' ' + player.player + ' (' + player.team + ', ' + (player.position || 'DEF') + ')';
-
-            div.addEventListener('click', () => {
-              document.querySelectorAll(safeSelForPlayer(player.player))
-                .forEach(entry => entry.classList.toggle('crossed'));
-            });
-
-            defList.appendChild(div);
-          });
-        }
-
-        // 4) Kicker (eigene JSON, eigener Rang)
-        if (kList && Array.isArray(kickerData)) {
-          kickerData.forEach((player, i) => {
-            const div = document.createElement('div');
-            div.className = 'player-entry Kicker';
-            div.dataset.player = player.player;
-            const rankText = (i + 1) + '.';
-            div.textContent = rankText + ' ' + player.player + ' (' + player.team + ', ' + (player.position || 'Kicker') + ')';
-
-            div.addEventListener('click', () => {
-              document.querySelectorAll(safeSelForPlayer(player.player))
-                .forEach(entry => entry.classList.toggle('crossed'));
-            });
-
-            kList.appendChild(div);
-          });
-        }
-      }
-
-      renderPlayers(currentData);
-
-      // Drag & Drop nur in "Alle Spieler"
-      Sortable.create(positionLists['ALL'], {
-        animation: 150,
-        onEnd: () => {
-          // neue Reihenfolge übernehmen
-          currentData = Array.from(positionLists['ALL'].children).map(div => {
-            const name = div.dataset.player;
-            return draftData.find(p => p.player === name);
-          });
-          renderPlayers(currentData);
-        }
       });
     });
   </script>

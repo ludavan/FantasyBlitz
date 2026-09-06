@@ -4,7 +4,7 @@
   "description": "FantasyBlitz Website mit automatischem updatedAt in JSON Files",
   "private": true,
   "scripts": {
-    "inject-updated": "node scripts/inject-updatedAt.js 2025"
+    "inject-updated": "node scripts/inject-updatedAt.js 2026"
   },
   "keywords": [],
   "author": "",

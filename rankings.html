@@ -42,15 +42,13 @@
       <ul class="nav-list">
         <li><a href="index.html">Startseite</a></li>
         <li><a href="rankings.html">Weekly Rankings</a></li>
-        <li><a href="waivers.html">Waivers</a></li>
         <li class="dropdown">
           <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
           <div class="submenu" role="menu">
-            <a href="draft-2025.html">Draft Cheat Sheet</a>
+            <a href="draft-2026.html">Draft Cheat Sheet</a>
             <a href="draft-guide.html">Draft Guide</a>
           </div>
         </li>
-        <li><a href="stats.html">Stats</a></li>
         <li><a href="info.html">Info</a></li>
       </ul>
     </nav>
@@ -63,22 +61,20 @@
 <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
   <a href="index.html">Startseite</a>
   <a href="rankings.html">Weekly Rankings</a>
-  <a href="waivers.html">Waivers</a>
   <div class="dropdown">
     <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
     <div class="submenu">
-      <a href="draft-2025.html">Draft Cheat Sheet</a>
+      <a href="draft-2026.html">Draft Cheat Sheet</a>
       <a href="draft-guide.html">Draft Guide</a>
     </div>
   </div>
-  <a href="stats.html">Stats</a>
   <a href="info.html">Info</a>
 </nav>
 <div class="overlay" id="overlay" hidden></div>
 
 <main class="rankings-page">
   <div class="header-row">
-    <h2>Weekly Rankings 2025</h2>
+    <h2>Weekly Rankings 2026</h2>
 
     <div class="header-right">
       <div id="updateInfo" class="last-update">Letztes Update am: –</div>
@@ -109,16 +105,16 @@
 
 <footer class="site-footer" role="contentinfo">
   <p>
-    © <span id="y">2025</span> FantasyBlitz ·
+    © <span id="y">2026</span> FantasyBlitz ·
     <a class="footer-link" href="impressum.html">Impressum</a> ·
     <a class="footer-link" href="datenschutz.html">Datenschutz</a>
   </p>
 </footer>
 
 <script>
-  // Jahr automatisch: "2025" oder "2025–{aktuelles Jahr}"
+  // Jahr automatisch: "2026" oder "2026–{aktuelles Jahr}"
   (function(){
-    var start=2025, y=new Date().getFullYear();
+    var start=2026, y=new Date().getFullYear();
     var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
   })();
 </script>
@@ -126,7 +122,7 @@
 
 <script>
 /* ========== Globale Konstanten ========== */
-const YEAR = "2025";
+const YEAR = "2026";
 const MAX_WEEKS = 18;
 const IS_PROD = /\.?fantasyblitz\.de$/i.test(location.hostname); // Prod erkenntnis
 
@@ -326,9 +322,9 @@ async function initWeeksAndLoad(){
 }
 
 /* ========== Events ========== */
-// Jahr im Footer automatisch "2025" oder "2025–{aktuelles Jahr}"
+// Jahr im Footer automatisch "2026" oder "2026–{aktuelles Jahr}"
 (function autoYear(){
-  const start=2025, y=new Date().getFullYear();
+  const start=2026, y=new Date().getFullYear();
   const el=document.getElementById('y');
   if (el) el.textContent = y>start ? (start + '–' + y) : String(start);
 })();

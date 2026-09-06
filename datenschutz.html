@@ -38,15 +38,13 @@
         <ul class="nav-list">
           <li><a href="index.html">Startseite</a></li>
           <li><a href="rankings.html">Weekly Rankings</a></li>
-          <li><a href="waivers.html">Waivers</a></li>
           <li class="dropdown">
             <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
             <div class="submenu" role="menu">
-              <a href="draft-2025.html">Draft Cheat Sheet</a>
+              <a href="draft-2026.html">Draft Cheat Sheet</a>
               <a href="draft-guide.html">Draft Guide</a>
             </div>
           </li>
-          <li><a href="stats.html">Stats</a></li>
           <li><a href="info.html">Info</a></li>
         </ul>
       </nav>
@@ -60,15 +58,13 @@
   <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
     <a href="index.html">Startseite</a>
     <a href="rankings.html">Weekly Rankings</a>
-    <a href="waivers.html">Waivers</a>
     <div class="dropdown">
       <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
       <div class="submenu">
-        <a href="draft-2025.html">Draft Cheat Sheet</a>
+        <a href="draft-2026.html">Draft Cheat Sheet</a>
         <a href="draft-guide.html">Draft Guide</a>
       </div>
     </div>
-    <a href="stats.html">Stats</a>
     <a href="info.html">Info</a>
   </nav>
   <div class="overlay" id="overlay" hidden></div>
@@ -148,22 +144,22 @@
     </section>
 
     <p class="small muted" style="margin-top:40px;">
-      Stand: <span id="ds-stand">2025-08-19</span>
+      Stand: <span id="ds-stand">2026-08-19</span>
     </p>
   </main>
 
   <footer class="site-footer" role="contentinfo">
     <p>
-      © <span id="y">2025</span> FantasyBlitz ·
+      © <span id="y">2026</span> FantasyBlitz ·
       <a class="footer-link" href="impressum.html">Impressum</a> ·
       <a class="footer-link" href="datenschutz.html">Datenschutz</a>
     </p>
   </footer>
 
   <script>
-    // Jahr automatisch "2025" oder "2025–{aktuelles Jahr}"
+    // Jahr automatisch "2026" oder "2026–{aktuelles Jahr}"
     (function(){
-      var start=2025, y=new Date().getFullYear();
+      var start=2026, y=new Date().getFullYear();
       var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
     })();
   </script>

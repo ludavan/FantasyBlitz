@@ -9,8 +9,8 @@
   <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
   <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <!-- CSS -->
+  <link rel="apple-touch-icon" href="/favicon-apple-touch.png">
+  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/site.css" />
 </head>
@@ -26,15 +26,13 @@
         <ul class="nav-list">
           <li><a href="index.html">Startseite</a></li>
           <li><a href="rankings.html">Weekly Rankings</a></li>
-          <li><a href="waivers.html">Waivers</a></li>
           <li class="dropdown">
             <button class="nav-link nav-caret" aria-expanded="false">Draft</button>
             <div class="submenu" role="menu">
-              <a href="draft-2025.html">Draft Cheat Sheet</a>
+              <a href="draft-2026.html">Draft Cheat Sheet</a>
               <a href="draft-guide.html">Draft Guide</a>
             </div>
           </li>
-          <li><a href="stats.html">Stats</a></li>
           <li><a href="info.html">Info</a></li>
         </ul>
       </nav>
@@ -48,15 +46,13 @@
   <nav class="nav-panel container" id="navPanel" aria-label="Mobiles Menü">
     <a href="index.html">Startseite</a>
     <a href="rankings.html">Weekly Rankings</a>
-    <a href="waivers.html">Waivers</a>
     <div class="dropdown">
       <button class="nav-link nav-caret" id="draftToggle" aria-expanded="false">Draft</button>
       <div class="submenu">
-        <a href="draft-2025.html">Draft Cheat Sheet</a>
+        <a href="draft-2026.html">Draft Cheat Sheet</a>
         <a href="draft-guide.html">Draft Guide</a>
       </div>
     </div>
-    <a href="stats.html">Stats</a>
     <a href="info.html">Info</a>
   </nav>
   <div class="overlay" id="overlay" hidden></div>
@@ -68,8 +64,8 @@
          style="max-width: 300px; height: auto; display: block; margin: 0 auto 6px;">
        </picture>
       <p style="margin: 0 auto 50px; font-size: 1.25rem; font-weight: 500; line-height: 1.5; max-width: 700px; padding: 0 20px;">
-        Der Fantasy Football Guide aus der deutschsprachigen Community – mit wöchentlichen Rankings, 
-        Waiver-Tipps und interaktiven Tools, die dir helfen, deine Liga zu dominieren.
+        Fantasy Football Rankings aus der deutschsprachigen Community – mit Draft Rankings und 
+        wöchentlichen Rankings für deine Lineup-Entscheidungen.
       </p>
     </section>
 
@@ -81,32 +77,18 @@
         <a href="rankings.html" class="btn-dark">Rankings ansehen</a>
       </div>
 
-      <div class="feature-card">
-        <img src="img/waiver-hero.png" alt="Top Waivers" />
-        <h3>Top Waiver Picks</h3>
-        <p>Wöchentliche Empfehlungen für Free Agents mit Breakout-Potenzial.</p>
-        <a href="waivers.html" class="btn-dark">Zu den Waivers</a>
-      </div>
-
-      <div class="feature-card">
-        <img src="img/stats-hero.png" alt="Statistiken" />
-        <h3>Fantasy Statistiken</h3>
-        <p>Eigene Charts & Tools für echte Fantasy-Nerds – mit tiefen Team- und Spieleranalysen sowie Trend-Insights.</p>
-        <a href="stats.html" class="btn-dark">Statistiken ansehen</a>
-      </div>
-
-      <div class="feature-card">
+<div class="feature-card">
         <img src="img/draft-rankings-hero.png" alt="Draft Rankings" />
         <h3>Draft Rankings</h3>
         <p>Unsere Top-Spieler für deinen Draft – mit interaktivem Cheat-Sheet für dein Live-Board.</p>
-        <a href="draft-2025.html" class="btn-dark">Zu den Draft Rankings</a>
+        <a href="draft-2026.html" class="btn-dark">Zu den Draft Rankings</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer" role="contentinfo">
     <p>
-      © <span id="y">2025</span> FantasyBlitz ·
+      © <span id="y">2026</span> FantasyBlitz ·
       <a class="footer-link" href="impressum.html">Impressum</a> ·
       <a class="footer-link" href="datenschutz.html">Datenschutz</a>
     </p>
@@ -115,7 +97,7 @@
   <script>
     // Jahr
     (function(){
-      var start=2025, y=new Date().getFullYear();
+      var start=2026, y=new Date().getFullYear();
       var el=document.getElementById('y'); if(el) el.textContent = y>start ? (start + '–' + y) : String(start);
     })();
   </script>
